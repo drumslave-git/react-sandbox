@@ -15,13 +15,18 @@ module.exports = {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'public')
     },
-    
+
     module: {
         loaders: [
             {
                 test: /\.jsx?$/,
-                exclude: /node_modules/,
+                include: path.resolve(__dirname, 'src'),
                 loader: 'babel-loader'
+            },
+            {
+                test: /\.scss$/,
+                include: path.resolve(__dirname, 'src'),
+                loader: 'style!css!sass'
             }
         ]
     },
