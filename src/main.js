@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-require('./main.scss');
+require('./assets/scss/main.scss');
 
 import App from './components/App.jsx';
 
