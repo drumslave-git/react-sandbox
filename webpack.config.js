@@ -1,4 +1,10 @@
 var path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
+    template: __dirname + '/src/index.html',
+    filename: 'index.html',
+    inject: 'body'
+});
 
 module.exports = {
     devtool: 'source-map',
@@ -30,6 +36,8 @@ module.exports = {
             }
         ]
     },
+
+    plugins: [HtmlWebpackPluginConfig],
 
     modulesDirectories: [ 'node_modules' ]
 };
