@@ -1,4 +1,4 @@
-# React/Webpack/ES6 boilerplate
+# React/React Router/Webpack/ES6 boilerplate
 
 A simple React and ES6 boilerplate, meant to development purposes only. The boilerplate will compile all JSX, ES6 and SCSS code into browser consumable code. 
  
