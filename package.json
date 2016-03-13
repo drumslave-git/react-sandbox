@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server --devtool source-map --progress --colors --hot --content-base public",
+    "prestart": "npm run bundle",
+    "start": "webpack-dev-server --devtool source-map --hot --inline --content-base public",
     "bundle": "webpack -p"
   },
   "author": "",
