@@ -7,15 +7,9 @@ var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 });
 
 module.exports = {
-    devtool: 'source-map',
+    devtool: 'eval',
 
-    entry: {
-        main: [
-            'webpack/hot/dev-server',
-            'webpack-dev-server/client?http://localhost:8080',
-            path.resolve(__dirname, 'src/main.js')
-        ]
-    },
+    entry: path.resolve(__dirname, 'src/main.js'),
 
     output: {
         filename: 'bundle.js',
@@ -25,9 +19,9 @@ module.exports = {
     module: {
         loaders: [
             {
-                test: /\.jsx?$/,
+                test: /\.js?$/,
                 include: path.resolve(__dirname, 'src'),
-                loader: 'babel-loader'
+                loaders: ['react-hot', 'babel']
             },
             {
                 test: /\.scss$/,
