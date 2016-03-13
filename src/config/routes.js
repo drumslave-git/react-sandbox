@@ -1,12 +1,12 @@
 import React from 'react';
 import { Route, Router, browserHistory } from 'react-router';
 
-import App from '../components/App.jsx';
+import App from '../components/App';
 
 let routes = (
     <Router history={browserHistory}>
         <Route path="/" component={App} />
     </Router>
-)
+);
 
 export default routes;
