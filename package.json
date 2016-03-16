@@ -6,7 +6,8 @@
   "scripts": {
     "prestart": "npm run bundle",
     "start": "webpack-dev-server --devtool source-map --hot --inline --content-base public --history-api-fallback",
-    "bundle": "webpack -p"
+    "bundle": "node_modules/.bin/webpack -p",
+    "production": "cross-env NODE_ENV=production node_modules/.bin/webpack -p",
   },
   "author": "",
   "license": "ISC",
@@ -27,5 +28,8 @@
     "style-loader": "^0.13.0",
     "webpack": "^1.12.14",
     "webpack-dev-server": "^1.14.1"
+  },
+  "devDependencies": {
+    "cross-env": "^1.0.7"
   }
 }
