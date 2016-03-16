@@ -1,4 +1,4 @@
-# React/React Router/Webpack/ES6 boilerplate
+# React/React Router/ES6/Hot Reloading boilerplate using Webpack
 
 A simple React and ES6 boilerplate. The boilerplate will compile all JSX, ES6 and SCSS code into browser consumable code. 
  
@@ -11,4 +11,6 @@ Make sure you have Node.js installed.
 3. Start the dev server using `npm start`
 3. Open [http://localhost:8080](http://localhost:8080)
 
-The production-ready code can be found under the `public` folder.
+## Production code
+
+Just run `npm build`. The production-ready code will be located under `public` folder.
