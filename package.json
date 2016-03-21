@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prestart": "npm run bundle",
     "start": "webpack-dev-server --devtool source-map --hot --inline --content-base public --history-api-fallback",
-    "bundle": "node_modules/.bin/webpack -p",
-    "production": "cross-env NODE_ENV=production node_modules/.bin/webpack -p"
+    "production": "cross-env NODE_ENV=production node_modules/.bin/webpack -p --config webpack.production.config.js",
+    "bundle": "node_modules/.bin/webpack -p"
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +24,7 @@
     "babel-preset-react": "^6.5.0",
     "babel-preset-react-boilerplate": "^1.0.0",
     "css-loader": "^0.23.1",
+    "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
     "html-webpack-plugin": "^2.9.0",
     "node-sass": "^3.4.2",
