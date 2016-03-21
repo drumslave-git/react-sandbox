@@ -29,6 +29,10 @@ var config = {
         test: /\.scss$/,
         include: path.resolve(__dirname, 'src/assets/scss'),
         loader: 'style!css!sass'
+      },
+      {
+        test: /\.(png|jpg)$/,
+        loader: 'url?limit=15000'
       }
     ]
   },
