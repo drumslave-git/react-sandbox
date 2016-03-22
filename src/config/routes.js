@@ -3,7 +3,7 @@ import { Route, Router, browserHistory } from 'react-router';
 
 import App from '../components/App';
 
-let routes = (
+const routes = (
     <Router history={browserHistory}>
         <Route path="/" component={App} />
     </Router>
