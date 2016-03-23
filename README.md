@@ -27,3 +27,7 @@ Make sure you have Node.js installed.
 ## Production code
 
 Run `npm production`. The production-ready code will be located under `dist` folder.
+
+## Licence
+
+_react-webpack-boilerplate_ is available under MIT.
