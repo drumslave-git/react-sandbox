@@ -1,7 +1,20 @@
-# React/React Router/ES6/Hot Reloading boilerplate using Webpack
+# ES6 React boilerplate using Webpack
 
-A simple React and ES6 boilerplate. The boilerplate will compile all JSX, ES6 and SCSS code into browser consumable code. 
- 
+Simple and optimized React boilerplate. It includes: 
+
+- [x] React 0.14
+- [x] ECMAScript 6 and JSX support
+- [x] React Router
+- [x] Webpack Dev Server
+- [x] Hot Reloading
+- [x] SASS support
+- [x] Separate CSS stylesheets generation
+- [x] Automatic HTML generation
+- [x] Production Config
+- [x] Custom Babel Preset with Decorators, Class Properties, Rest/Spread operator support 
+- [x] ES6 Linting
+- [ ] Redux
+
 ## Starting the dev server
 
 Make sure you have Node.js installed.
