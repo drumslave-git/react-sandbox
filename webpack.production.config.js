@@ -4,7 +4,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
-  template: __dirname + '/src/index.html',
+  template: __dirname + '/app/index.html',
   filename: 'index.html',
   inject: 'body'
 });
@@ -12,7 +12,7 @@ var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 var config = {
   devtool: 'cheap-module-source-map',
 
-  entry: path.resolve(__dirname, 'src/main.js'),
+  entry: path.resolve(__dirname, 'app/main.js'),
 
   output: {
     filename: 'bundle.js',
@@ -23,13 +23,13 @@ var config = {
     loaders: [
       {
         test: /\.js?$/,
-        include: path.resolve(__dirname, 'src'),
+        include: path.resolve(__dirname, 'app'),
         exclude: /node_modules/,
         loader: 'babel'
       },
       {
         test: /\.scss$/,
-        include: path.resolve(__dirname, 'src/assets/scss'),
+        include: path.resolve(__dirname, 'app/assets/scss'),
         loader: ExtractTextPlugin.extract('css!sass')
       },
       {
