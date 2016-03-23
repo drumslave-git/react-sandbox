@@ -26,7 +26,7 @@ Make sure you have Node.js installed.
 
 ## Production code
 
-Run `npm production`. The production-ready code will be located under `dist` folder.
+Run `npm run production`. The production-ready code will be located under `dist` folder.
 
 ## Licence
 
