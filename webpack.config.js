@@ -2,6 +2,7 @@ var path = require('path');
 
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var OpenBrowserPlugin = require('open-browser-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   template: __dirname + '/app/index.html',
@@ -43,6 +44,9 @@ var config = {
     HtmlWebpackPluginConfig,
     new ExtractTextPlugin('styles/style.css', {
       allChunks: true
+    }),
+    new OpenBrowserPlugin({
+      url: 'http://localhost:8080'
     })
   ]
 };
