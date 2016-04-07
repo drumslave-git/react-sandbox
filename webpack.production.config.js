@@ -1,7 +1,7 @@
 var path = require('path');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   template: __dirname + '/app/index.html',
@@ -12,7 +12,10 @@ var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 var config = {
   devtool: 'cheap-module-source-map',
 
-  entry: path.resolve(__dirname, 'app/main.js'),
+  entry: [
+    path.resolve(__dirname, 'app/main.js'),
+    path.resolve(__dirname, 'app/assets/scss/main.scss')
+  ],
 
   output: {
     filename: 'bundle.js',
@@ -29,25 +32,20 @@ var config = {
       },
       {
         test: /\.scss$/,
-        include: path.resolve(__dirname, 'app/assets/scss'),
-        loader: ExtractTextPlugin.extract('css!sass')
-      },
-      {
-        test: /\.(png|jpg)$/,
-        loader: 'url?limit=15000'
+        loader: ExtractTextPlugin.extract("style-loader", "css-loader!sass-loader")
       }
     ]
   },
 
-  plugins: [HtmlWebpackPluginConfig,
+  plugins: [
+    HtmlWebpackPluginConfig,
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({comments: false}),
     new webpack.DefinePlugin({
       'process.env': {NODE_ENV: JSON.stringify('production')}
     }),
-    new ExtractTextPlugin('styles/style.css', {
-      allChunks: true
-    })]
+    new ExtractTextPlugin("style.css", {allChunks: false})
+  ]
 };
 
 module.exports = config;

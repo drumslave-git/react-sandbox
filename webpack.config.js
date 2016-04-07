@@ -13,7 +13,10 @@ var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 var config = {
   devtool: 'source-map',
 
-  entry: path.resolve(__dirname, 'app/main.js'),
+  entry: [
+    path.resolve(__dirname, 'app/main.js'),
+    path.resolve(__dirname, 'app/assets/scss/main.scss')
+  ],
 
   output: {
     filename: 'bundle.js',
@@ -29,9 +32,9 @@ var config = {
         loaders: ['react-hot', 'babel']
       },
       {
-        test: /\.scss$/,
-        include: path.resolve(__dirname, 'app/assets/scss'),
-        loader: ExtractTextPlugin.extract('css!sass')
+        test: /\.css$/,
+        include: path.resolve(__dirname, 'app/assets/css'),
+        loader: ExtractTextPlugin.extract("style-loader", "css-loader")
       },
       {
         test: /\.(png|jpg)$/,
