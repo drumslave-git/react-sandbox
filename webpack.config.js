@@ -32,9 +32,9 @@ var config = {
         loaders: ['react-hot', 'babel']
       },
       {
-        test: /\.css$/,
-        include: path.resolve(__dirname, 'app/assets/css'),
-        loader: ExtractTextPlugin.extract("style-loader", "css-loader")
+        test: /\.scss$/,
+        include: path.resolve(__dirname, 'app/assets/scss'),
+        loader: ExtractTextPlugin.extract("style-loader", "css-loader!sass-loader")
       },
       {
         test: /\.(png|jpg)$/,
