@@ -32,8 +32,8 @@ var config = {
         loaders: ['react-hot', 'babel']
       },
       {
-        test: /\.scss/,
-        include: path.resolve(__dirname, 'app/assets/scss'),
+        test: /\.scss$/,
+        include: path.resolve(__dirname, 'app/assets/css'),
         loader: ExtractTextPlugin.extract('style-loader', 'css-loader!sass-loader')
       },
       {
@@ -45,8 +45,12 @@ var config = {
 
   plugins: [
     HtmlWebpackPluginConfig,
-    new ExtractTextPlugin('styles/style.css', { allChunks: true }),
-    new OpenBrowserPlugin({ url: 'http://localhost:8080' })
+    new ExtractTextPlugin('styles/style.css', {
+      allChunks: true
+    }),
+    new OpenBrowserPlugin({
+      url: 'http://localhost:8080'
+    })
   ]
 };
 
