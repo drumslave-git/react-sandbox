@@ -33,7 +33,7 @@ var config = {
       },
       {
         test: /\.scss$/,
-        include: path.resolve(__dirname, 'app/assets/css'),
+        include: path.resolve(__dirname, 'app/assets/scss'),
         loader: ExtractTextPlugin.extract('style-loader', 'css-loader!sass-loader')
       },
       {
