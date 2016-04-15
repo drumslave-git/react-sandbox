@@ -2,6 +2,7 @@ var path = require('path');
 
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 var OpenBrowserPlugin = require('open-browser-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
@@ -20,9 +21,13 @@ var config = {
 
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'public')
+    path: path.resolve(__dirname, 'dist')
   },
-
+  
+  devServer: {
+    outputPath: path.join(__dirname, 'dist')
+  },
+  
   module: {
     loaders: [
       {
@@ -33,7 +38,6 @@ var config = {
       },
       {
         test: /\.scss$/,
-        include: path.resolve(__dirname, 'app/assets/scss'),
         loader: ExtractTextPlugin.extract('style-loader', 'css-loader!sass-loader')
       },
       {
@@ -45,12 +49,9 @@ var config = {
 
   plugins: [
     HtmlWebpackPluginConfig,
-    new ExtractTextPlugin('styles/style.css', {
-      allChunks: true
-    }),
-    new OpenBrowserPlugin({
-      url: 'http://localhost:8080'
-    })
+    new ExtractTextPlugin('styles/style.css'),
+    new CopyWebpackPlugin([{ from: 'app/vendors', to: 'vendors' }]),
+    new OpenBrowserPlugin({ url: 'http://localhost:8080' }),
   ]
 };
 

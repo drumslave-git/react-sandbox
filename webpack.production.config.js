@@ -1,6 +1,7 @@
 var path = require('path');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
@@ -20,6 +21,10 @@ var config = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
+  },
+
+  devServer: {
+    outputPath: path.join(__dirname, 'dist')
   },
 
   module: {
@@ -44,7 +49,10 @@ var config = {
     new webpack.DefinePlugin({
       'process.env': {NODE_ENV: JSON.stringify('production')}
     }),
-    new ExtractTextPlugin("style.css", {allChunks: false})
+    new ExtractTextPlugin("style.css", {allChunks: false}),
+    new CopyWebpackPlugin([
+      { from: 'app/vendors', to: 'vendors' }
+    ])
   ]
 };
 
