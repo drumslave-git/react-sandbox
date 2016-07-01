@@ -17,8 +17,8 @@
   "dependencies": {
     "cross-env": "^1.0.7",
     "react": "^15.1.0",
-    "react-dom": "^15.1.0",
-    "react-router": "^2.5.0"
+    "react-dom": "^15.2.0",
+    "react-router": "^2.5.2"
   },
   "devDependencies": {
     "babel-cli": "^6.7.5",
@@ -33,9 +33,9 @@
     "copy-webpack-plugin": "^3.0.1",
     "css-loader": "^0.23.1",
     "enzyme": "^2.3.0",
-    "eslint": "^2.13.1",
+    "eslint": "^3.0.0",
     "eslint-config-airbnb": "^9.0.1",
-    "eslint-plugin-import": "^1.9.2",
+    "eslint-plugin-import": "^1.10.0",
     "eslint-plugin-jsx-a11y": "^1.5.3",
     "eslint-plugin-react": "^5.2.2",
     "extract-text-webpack-plugin": "^1.0.1",
