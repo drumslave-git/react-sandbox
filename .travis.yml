@@ -5,7 +5,7 @@ cache:
     - node_modules
 branches:
   only:
-      - v.2
+      - master
 notifications:
   email: false
 node_js:
