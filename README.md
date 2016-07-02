@@ -27,6 +27,13 @@ Make sure you have Node.js installed.
 3. Start the dev server using `npm start`
 3. Open [http://localhost:8080](http://localhost:8080)
 
+## Available Commands
+
+- `npm start` - start the dev server
+- `npm run production` - create a production ready build in `dist` folder
+- `npm run lint` - execute an eslint check
+- `npm test` - run all tests
+
 ## Vendor Exporting
 
 You can export specific vendors in separate files and load them. All vendors should be included in `app/vendors` and will be exported in a `vendors` folder under `dist`. The main idea is to serve independent JavaScript and CSS libraries, though currently all file formats are supported.
