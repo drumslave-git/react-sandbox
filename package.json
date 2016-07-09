@@ -1,7 +1,7 @@
 {
   "name": "react-webpack-boilerplate",
   "version": "2.0.0",
-  "description": "",
+  "description": "Minimalistic ES6 React boilerplate",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --devtool source-map --hot --inline --content-base public --history-api-fallback",
@@ -12,8 +12,8 @@
     "precommit": "npm run lint && npm test",
     "prepush": "npm run lint && npm test"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Kliment Petrov <kleopetroff@gmail.com>",
+  "license": "MIT",
   "dependencies": {
     "cross-env": "^1.0.7",
     "react": "^15.2.0",
