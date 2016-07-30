@@ -12,7 +12,7 @@ var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 });
 
 var config = {
-  devtool: 'source-map',
+  devtool: 'cheap-module-eval-source-map',
 
   entry: [
     path.resolve(__dirname, 'app/main.js'),
@@ -52,7 +52,6 @@ var config = {
 
   plugins: [
     HtmlWebpackPluginConfig,
-    // new webpack.HotModuleReplacementPlugin(),
     new ExtractTextPlugin('styles/style.css'),
     new CopyWebpackPlugin([{ from: 'app/vendors', to: 'vendors' }]),
     new OpenBrowserPlugin({ url: 'http://localhost:8080' }),
