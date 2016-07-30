@@ -34,7 +34,10 @@ var config = {
         test: /\.js?$/,
         exclude: /node_modules/,
         include: path.resolve(__dirname, 'app'),
-        loaders: ['react-hot', 'babel']
+        loader: 'babel',
+        query: {
+          presets: ['react-hmre']
+        }
       },
       {
         test: /\.scss$/,
@@ -49,6 +52,7 @@ var config = {
 
   plugins: [
     HtmlWebpackPluginConfig,
+    // new webpack.HotModuleReplacementPlugin(),
     new ExtractTextPlugin('styles/style.css'),
     new CopyWebpackPlugin([{ from: 'app/vendors', to: 'vendors' }]),
     new OpenBrowserPlugin({ url: 'http://localhost:8080' }),
