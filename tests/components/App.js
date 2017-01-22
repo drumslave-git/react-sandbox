@@ -4,7 +4,11 @@ import { shallow } from 'enzyme';
 import App from '../../app/components/App';
 
 describe('App Component', () => {
-  const wrapper = shallow(<App />);
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = shallow(<App />);
+  });
 
   it('should exist', () => {
     expect(wrapper).to.exist;

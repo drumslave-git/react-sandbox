@@ -1,60 +1,73 @@
-var path = require('path');
+const { resolve } = require('path');
 
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var OpenBrowserPlugin = require('open-browser-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
-  template: __dirname + '/app/index.html',
-  filename: 'index.html',
-  inject: 'body'
-});
 
 var config = {
   devtool: 'cheap-module-eval-source-map',
 
   entry: [
-    path.resolve(__dirname, 'app/main.js'),
-    path.resolve(__dirname, 'app/assets/scss/main.scss')
+    'react-hot-loader/patch',
+    'webpack-dev-server/client?http://localhost:8080',
+    'webpack/hot/only-dev-server',
+    './main.js',
+    './assets/scss/main.scss'
   ],
 
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    path: resolve(__dirname, 'dist'),
+    publicPath: '/',
   },
-  
+
+  context: resolve(__dirname, 'app'),
+
   devServer: {
-    outputPath: path.join(__dirname, 'dist')
+    hot: true,
+    contentBase: resolve(__dirname, 'dist'),
+    publicPath: '/'
   },
-  
+
   module: {
-    loaders: [
+    rules: [
       {
-        test: /\.js?$/,
-        exclude: /node_modules/,
-        include: path.resolve(__dirname, 'app'),
-        loader: 'babel',
-        query: {
-          presets: ['react-hmre']
-        }
+        test: /\.js$/,
+        loaders: [
+          'babel-loader',
+        ],
+        exclude: /node_modules/
       },
       {
         test: /\.scss$/,
-        loader: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader!sass-loader'})
+        exclude: /node_modules/,
+        loader: ExtractTextPlugin.extract({
+          fallbackLoader: "style-loader",
+          loader: [
+            'css-loader',
+            {
+              loader: 'sass-loader',
+              query: {
+                sourceMap: false,
+              }
+            }
+            ]
+        })
       },
-      {
-        test: /\.(png|jpg)$/,
-        loader: 'url?limit=15000'
-      }
+      // {
+      //   test: /\.(png|jpg)$/,
+      //   loader: 'url?limit=15000'
+      // }
     ]
   },
 
   plugins: [
-    HtmlWebpackPluginConfig,
-    new ExtractTextPlugin('styles/style.css'),
-    new CopyWebpackPlugin([{ from: 'app/vendors', to: 'vendors' }]),
+    // HtmlWebpackPluginConfig,
+    new ExtractTextPlugin({ filename: 'style.css', disable: false, allChunks: true}),
+    new CopyWebpackPlugin([{ from: 'vendors', to: 'vendors' }]),
     new OpenBrowserPlugin({ url: 'http://localhost:8080' }),
+    new webpack.HotModuleReplacementPlugin(),
   ]
 };
 
