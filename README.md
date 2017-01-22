@@ -4,7 +4,7 @@
 
 Simple and optimized React boilerplate. It includes: 
 
-- [x] React 15.3.0
+- [x] React 15.4.2
 - [x] ECMAScript 6 and JSX support
 - [x] React Router
 - [x] Latest Webpack Dev Server
