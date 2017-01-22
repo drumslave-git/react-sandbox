@@ -1,55 +1,72 @@
-var path = require('path');
+var { resolve } = require('path');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
-var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
-  template: __dirname + '/app/index.html',
-  filename: 'index.html',
-  inject: 'body'
-});
-
 var config = {
   devtool: 'cheap-module-source-map',
 
   entry: [
-    path.resolve(__dirname, 'app/main.js'),
-    path.resolve(__dirname, 'app/assets/scss/main.scss')
+    './main.js',
+    './assets/scss/main.scss'
   ],
+
+  context: resolve(__dirname, 'app'),
 
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    path: resolve(__dirname, 'dist'),
+    publicPath: '',
   },
 
-  devServer: {
-    outputPath: path.join(__dirname, 'dist')
-  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: __dirname + '/app/index.html',
+      filename: 'index.html',
+      inject: 'body'
+    }),
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.LoaderOptionsPlugin({
+      minimize: true,
+      debug: false
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      beautify: false,
+      mangle: {
+        screw_ie8: true,
+        keep_fnames: true
+      },
+      compress: {
+        screw_ie8: true
+      },
+      comments: false
+    }),
+    new webpack.DefinePlugin({ 'process.env': { NODE_ENV: JSON.stringify('production') } }),
+    new ExtractTextPlugin({ filename: 'style.css', disable: false, allChunks: true}),
+    new CopyWebpackPlugin([{ from: './vendors', to: 'vendors' }])
+  ],
 
   module: {
     loaders: [
       {
         test: /\.js?$/,
-        include: path.resolve(__dirname, 'app'),
         exclude: /node_modules/,
-        loader: 'babel'
+        loader: 'babel-loader'
       },
       {
         test: /\.scss$/,
-        loader: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader!sass-loader'})
-      }
+        exclude: /node_modules/,
+        loader: ExtractTextPlugin.extract({
+          fallbackLoader: "style-loader",
+          loader: [
+            'css-loader',
+            { loader: 'sass-loader', query: { sourceMap: false } }
+          ]
+        })
+      },
     ]
   },
-
-  plugins: [
-    HtmlWebpackPluginConfig,
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({comments: false}),
-    new webpack.DefinePlugin({ 'process.env': { NODE_ENV: JSON.stringify('production') } }),
-    new ExtractTextPlugin("style.css", {allChunks: false}),
-    new CopyWebpackPlugin([{ from: 'app/vendors', to: 'vendors' }])
-  ]
 };
 
 module.exports = config;
