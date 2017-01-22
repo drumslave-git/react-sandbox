@@ -7,7 +7,7 @@ Simple and optimized React boilerplate. It includes:
 - [x] React 15.4.2
 - [x] ECMAScript 6 and JSX support
 - [x] React Router
-- [x] Latest Webpack Dev Server
+- [x] Latest Webpack and Webpack Dev Server
 - [x] Hot Reloading using [react-hot-loader](https://github.com/gaearon/react-hot-loader)
 - [x] SASS support
 - [x] Separate CSS stylesheets generation
@@ -30,6 +30,7 @@ Make sure you have Node.js installed.
 ## Available Commands
 
 - `npm start` - start the dev server
+- `npm clean` - delete the dist folder
 - `npm run production` - create a production ready build in `dist` folder
 - `npm run lint` - execute an eslint check
 - `npm test` - run all tests
