@@ -7,8 +7,8 @@ Simple and optimized React boilerplate. It includes:
 - [x] React 15.4.2
 - [x] ECMAScript 6 and JSX support
 - [x] React Router
-- [x] Latest Webpack and Webpack Dev Server
-- [x] Hot Reloading using [react-hot-loader](https://github.com/gaearon/react-hot-loader)
+- [x] Latest Webpack (v.2.2) and Webpack Dev Server (v.2.2)
+- [x] Hot Module Replacement using [react-hot-loader](https://github.com/gaearon/react-hot-loader)
 - [x] SASS support
 - [x] Separate CSS stylesheets generation
 - [x] Automatic HTML generation
