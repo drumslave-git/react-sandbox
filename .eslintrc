@@ -13,6 +13,8 @@
   "extends": "airbnb",
   "rules": {
     "space-before-function-paren": 0,
-    "react/prefer-stateless-function": 1
+    "react/prefer-stateless-function": 0,
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "linebreak-style": 0
   }
 }
