@@ -1,5 +1,7 @@
 # ES6 React boilerplate using Webpack
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/KleoPetroff/react-webpack-boilerplate.svg)](https://greenkeeper.io/)
+
 [![Travis](https://img.shields.io/travis/KleoPetroff/react-webpack-boilerplate.svg?style=flat-square)](https://github.com/KleoPetroff/react-webpack-boilerplate) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 Simple and optimized React boilerplate. It includes: 
