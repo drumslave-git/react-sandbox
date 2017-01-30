@@ -65,6 +65,10 @@ var config = {
           ]
         })
       },
+      {
+        test: /\.(png|jpg)$/,
+        loader: 'url?limit=15000'
+      },
     ]
   },
 };
