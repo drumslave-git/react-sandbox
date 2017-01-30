@@ -55,15 +55,14 @@ var config = {
             ]
         })
       },
-      // {
-      //   test: /\.(png|jpg)$/,
-      //   loader: 'url?limit=15000'
-      // }
+      {
+        test: /\.(png|jpg)$/,
+        loader: 'url?limit=15000'
+      }
     ]
   },
 
   plugins: [
-    // HtmlWebpackPluginConfig,
     new ExtractTextPlugin({ filename: 'style.css', disable: false, allChunks: true}),
     new CopyWebpackPlugin([{ from: 'vendors', to: 'vendors' }]),
     new OpenBrowserPlugin({ url: 'http://localhost:8080' }),
