@@ -4,10 +4,10 @@
 
 Simple and optimized React boilerplate. It includes: 
 
-- [x] React 15.4.2
+- [x] React 15.5.4
 - [x] ECMAScript 6 and JSX support
 - [x] React Router
-- [x] Latest Webpack (v.2.2) and Webpack Dev Server (v.2.2)
+- [x] Latest Webpack (v.2.4.1) and Webpack Dev Server (v.2.4.2)
 - [x] Hot Module Replacement using [react-hot-loader](https://github.com/gaearon/react-hot-loader)
 - [x] SASS support
 - [x] Separate CSS stylesheets generation

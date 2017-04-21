@@ -1,17 +1,11 @@
 import React, { Component } from 'react';
-import { Router, Route, useRouterHistory } from 'react-router';
-import { createHashHistory } from 'history';
-import shortid from 'shortid';
-
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import App from '../components/App';
-
-
-const history = useRouterHistory(createHashHistory)({ queryKey: false });
 
 export default class Root extends Component {
   render() {
     return (
-      <Router history={history} key={shortid.generate()}>
+      <Router>
         <Route path="/" component={App} />
       </Router>
     );
