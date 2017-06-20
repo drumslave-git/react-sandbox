@@ -64,6 +64,7 @@ const config = {
   },
 
   plugins: [
+    new webpack.optimize.ModuleConcatenationPlugin(),
     new ExtractTextPlugin({ filename: 'style.css', disable: false, allChunks: true }),
     new CopyWebpackPlugin([{ from: 'vendors', to: 'vendors' }]),
     new OpenBrowserPlugin({ url: 'http://localhost:8080' }),
