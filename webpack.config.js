@@ -26,8 +26,8 @@ const config = {
 
   devServer: {
     hot: true,
-    contentBase: resolve(__dirname, 'dist'),
-    publicPath: '/',
+    contentBase: resolve(__dirname, 'build'),
+    publicPath: '/'
   },
 
   module: {
