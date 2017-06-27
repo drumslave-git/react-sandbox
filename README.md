@@ -4,7 +4,7 @@
 
 Simple and optimized React boilerplate. It includes: 
 
-- [x] React 15.6.0
+- [x] React 15.6.1
 - [x] ECMAScript 6 and JSX support
 - [x] React Router v4
 - [x] Component testing using [Enzyme](https://github.com/airbnb/enzyme)
