@@ -7,7 +7,7 @@
     "start": "webpack-dev-server",
     "clean": "rimraf dist",
     "production": "cross-env npm run clean && webpack --config webpack.production.config.js --progress --profile --colors",
-    "lint": "eslint app",
+    "lint": "eslint ./app/**/**.js",
     "test": "mocha --compilers js:babel-core/register --recursive ./tests/**/*.js",
     "precommit": "cross-env npm run lint && npm test",
     "prepush": "cross-env npm run lint && npm test"

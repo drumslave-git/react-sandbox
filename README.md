@@ -10,12 +10,12 @@ Simple and optimized React boilerplate. It includes:
 - [x] Component testing using [Enzyme](https://github.com/airbnb/enzyme)
 - [x] Latest Webpack (v.3.0.0) and Webpack Dev Server (v.2.5.0) with Scope Hoisting enabled
 - [x] Hot Module Replacement using [react-hot-loader](https://github.com/gaearon/react-hot-loader)
+- [x] ES6 linting with continuous linting on file change
 - [x] SASS support
 - [x] Separate CSS stylesheets generation
 - [x] Automatic HTML generation
 - [x] Production Config
-- [x] Custom Babel Preset with Decorators, Class Properties, Rest/Spread operator support 
-- [x] ES6 Linting
+- [x] Custom Babel Preset with Decorators, Class Properties, Rest/Spread operator support
 - [x] Export Separate Vendor Files
 - [ ] Redux
 
