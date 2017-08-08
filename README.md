@@ -8,7 +8,7 @@ Simple and optimized React boilerplate. It includes:
 - [x] ECMAScript 6 and JSX support
 - [x] React Router v4
 - [x] Component testing using [Enzyme](https://github.com/airbnb/enzyme)
-- [x] Latest Webpack (v.3.4.1) and Webpack Dev Server (v.2.6.1) with Scope Hoisting enabled
+- [x] Latest Webpack (v.3.5.1) and Webpack Dev Server (v.2.7.1) with Scope Hoisting enabled
 - [x] Hot Module Replacement using [react-hot-loader](https://github.com/gaearon/react-hot-loader)
 - [x] ES6 linting with continuous linting on file change
 - [x] SASS support
@@ -40,7 +40,7 @@ Make sure you have Node.js installed.
 
 You can export specific vendors in separate files and load them. All vendors should be included in `app/vendors` and will be exported in a `vendors` folder under `dist`. The main idea is to serve independent JavaScript and CSS libraries, though currently all file formats are supported.
 
-! Don't forget to add the vendors in `app/index.html`.
+! Don't forget to add the vendors in `app/index.html` and `build/index.html`.
 
 ## Production code
 
