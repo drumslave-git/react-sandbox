@@ -1,5 +1,4 @@
 import React from 'react';
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import App from '../../app/components/App';
 
@@ -11,10 +10,10 @@ describe('App Component', () => {
   });
 
   it('should exist', () => {
-    expect(wrapper).to.exist;
+    expect(wrapper).toBeTruthy();
   });
   
   it('should have one heading', () => {
-    expect(wrapper.find('#heading').type()).to.equal('h2');
+    expect(wrapper.find('#heading').type()).toEqual('h2');
   });
 });

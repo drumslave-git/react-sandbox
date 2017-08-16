@@ -8,12 +8,21 @@
     "clean": "rimraf dist",
     "production": "cross-env npm run clean && webpack --config webpack.production.config.js --progress --profile --colors",
     "lint": "eslint ./app/**/**.js",
-    "test": "mocha --compilers js:babel-core/register --recursive ./tests/**/*.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
     "precommit": "cross-env npm run lint && npm test",
     "prepush": "cross-env npm run lint && npm test"
   },
   "author": "Kliment Petrov <kleopetroff@gmail.com>",
   "license": "MIT",
+  "jest": {
+    "mapCoverage": true,
+    "collectCoverageFrom": [
+      "app/**/*.{js,jsx,ts,tsx}"
+    ],
+    "testMatch": ["**/?(*.)(spec|test).js?(x)"]
+  },
   "dependencies": {
     "cross-env": "^5.0.1",
     "react": "^15.6.1",
@@ -31,8 +40,6 @@
     "babel-preset-react-boilerplate": "1.1.1",
     "babel-preset-react-hmre": "1.1.1",
     "babel-preset-stage-2": "6.24.1",
-    "chai": "4.1.0",
-    "chai-enzyme": "0.8.0",
     "copy-webpack-plugin": "4.0.1",
     "css-loader": "0.28.4",
     "enzyme": "2.9.1",
@@ -46,7 +53,7 @@
     "file-loader": "1.0.0",
     "html-webpack-plugin": "2.30.0",
     "husky": "0.14.3",
-    "mocha": "3.5.0",
+    "jest": "^20.0.4",
     "node-sass": "4.5.3",
     "open-browser-webpack-plugin": "0.0.5",
     "react-addons-test-utils": "15.6.0",
