@@ -36,7 +36,7 @@ Make sure you have Node.js installed.
 - `npm run production` - create a production ready build in `dist` folder
 - `npm run lint` - execute an eslint check
 - `npm test` - run all tests
-- `npm test:watch` - run all tests in watch mode
+- `npm run test:watch` - run all tests in watch mode
 - `npm run coverage` - generate code coverage report in the `coverage` folder
 
 ## Vendor Exporting
