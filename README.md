@@ -58,3 +58,7 @@ Run `npm run production`. The production-ready code will be located under `dist`
 ## Licence
 
 _react-webpack-boilerplate_ is available under MIT.
+
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/aUZWkEPr1RGaPfgieFgfVFVG/KleoPetroff/react-webpack-boilerplate'>
+  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/aUZWkEPr1RGaPfgieFgfVFVG/KleoPetroff/react-webpack-boilerplate.svg' />
+</a>
