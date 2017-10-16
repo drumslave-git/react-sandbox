@@ -17,6 +17,9 @@
   "author": "Kliment Petrov <kleopetroff@gmail.com>",
   "license": "MIT",
   "jest": {
+    "setupFiles": [
+      "<rootDir>/shim.js"
+    ],
     "mapCoverage": true,
     "collectCoverageFrom": [
       "app/**/*.{js,jsx,ts,tsx}"
@@ -27,9 +30,9 @@
   },
   "dependencies": {
     "cross-env": "5.1.0",
-    "react": "15.6.2",
-    "react-dom": "15.6.2",
-    "react-hot-loader": "3.0.0",
+    "react": "16.0.0",
+    "react-dom": "16.0.0",
+    "react-hot-loader": "3.1.1",
     "react-router-dom": "4.2.0"
   },
   "devDependencies": {
@@ -44,7 +47,8 @@
     "babel-preset-stage-2": "6.24.1",
     "copy-webpack-plugin": "4.1.1",
     "css-loader": "0.28.7",
-    "enzyme": "2.9.1",
+    "enzyme": "3.1.0",
+    "enzyme-adapter-react-16": "1.0.1",
     "eslint": "3.19.0",
     "eslint-config-airbnb": "15.1.0",
     "eslint-loader": "1.8.0",
@@ -58,8 +62,8 @@
     "jest": "21.2.0",
     "node-sass": "4.5.3",
     "open-browser-webpack-plugin": "0.0.5",
-    "react-addons-test-utils": "15.6.0",
-    "react-test-renderer": "^15.6.1",
+    "react-addons-test-utils": "15.6.2",
+    "react-test-renderer": "16.0.0",
     "rimraf": "2.6.2",
     "sass-loader": "6.0.6",
     "style-loader": "0.18.2",
