@@ -22,7 +22,7 @@ Simple and optimized React boilerplate. It includes:
 
 ## Starting the dev server
 
-Make sure you have Node.js installed.
+Make sure you have the latest Stable or LTS version of Node.js installed.
 
 1. `git clone https://github.com/KleoPetroff/react-webpack-boilerplate.git`
 2. Run `npm install` or `yarn install`
