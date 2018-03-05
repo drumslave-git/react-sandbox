@@ -27,6 +27,7 @@ const config = {
   devServer: {
     hot: true,
     contentBase: resolve(__dirname, 'build'),
+    historyApiFallback: true,
     publicPath: '/'
   },
 
