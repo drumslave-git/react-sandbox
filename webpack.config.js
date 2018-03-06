@@ -49,7 +49,7 @@ const config = {
       {
         test: /\.scss$/,
         exclude: /node_modules/,
-        use: ExtractTextPlugin.extract({
+        use: ['css-hot-loader'].concat(ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: [
             'css-loader',
@@ -61,7 +61,7 @@ const config = {
             },
           ],
           publicPath: '../'
-        }),
+        })),
       },
       {
         test: /\.(png|jpg|gif)$/,
