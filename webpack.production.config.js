@@ -40,10 +40,14 @@ const config = {
     new CopyWebpackPlugin([{ from: './vendors', to: 'vendors' }]),
   ],
 
+  resolve: {
+    extensions: ['.js', '.jsx'],
+  },
+
   module: {
     loaders: [
       {
-        test: /\.js?$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
       },
