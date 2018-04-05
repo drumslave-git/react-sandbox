@@ -27,19 +27,24 @@ const config = {
   devServer: {
     hot: true,
     contentBase: resolve(__dirname, 'build'),
+    historyApiFallback: true,
     publicPath: '/'
+  },
+  
+  resolve: {
+    extensions: ['.js', '.jsx'],
   },
 
   module: {
     rules: [
       {
         enforce: "pre",
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         loader: "eslint-loader"
       },
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         loaders: [
           'babel-loader',
         ],
@@ -48,7 +53,7 @@ const config = {
       {
         test: /\.scss$/,
         exclude: /node_modules/,
-        use: ExtractTextPlugin.extract({
+        use: ['css-hot-loader'].concat(ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: [
             'css-loader',
@@ -60,7 +65,7 @@ const config = {
             },
           ],
           publicPath: '../'
-        }),
+        })),
       },
       {
         test: /\.(png|jpg|gif)$/,
@@ -130,7 +135,7 @@ const config = {
 
   plugins: [
     new webpack.LoaderOptionsPlugin({
-      test: /\.js$/,
+      test: /\.jsx?$/,
       options: {
         eslint: {
           configFile: resolve(__dirname, '.eslintrc'),
