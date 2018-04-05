@@ -36,8 +36,8 @@
   },
   "dependencies": {
     "cross-env": "5.1.4",
-    "react": "16.2.0",
-    "react-dom": "16.2.0",
+    "react": "16.3.1",
+    "react-dom": "16.3.1",
     "react-hot-loader": "4.0.1",
     "react-router-dom": "4.2.2"
   },
@@ -71,7 +71,7 @@
     "node-sass": "4.8.3",
     "open-browser-webpack-plugin": "0.0.5",
     "react-addons-test-utils": "15.6.2",
-    "react-test-renderer": "16.3.0",
+    "react-test-renderer": "16.3.1",
     "rimraf": "2.6.2",
     "sass-loader": "6.0.7",
     "style-loader": "0.20.3",
