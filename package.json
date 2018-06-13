@@ -35,7 +35,7 @@
     }
   },
   "dependencies": {
-    "cross-env": "5.1.6",
+    "cross-env": "5.2.0",
     "react": "16.4.0",
     "react-dom": "16.4.0",
     "react-hot-loader": "4.3.1",
