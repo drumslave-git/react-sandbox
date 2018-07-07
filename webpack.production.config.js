@@ -3,8 +3,13 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const config = {
+  stats: {
+    maxModules: 0
+  },
+  mode: 'production',
   devtool: 'cheap-module-source-map',
 
   entry: [
@@ -15,7 +20,8 @@ const config = {
   context: resolve(__dirname, 'app'),
 
   output: {
-    filename: 'bundle.js',
+    filename: '[name].[chunkhash].js',
+    chunkFilename: '[name].[chunkhash].js',
     path: resolve(__dirname, 'dist'),
     publicPath: '',
   },
@@ -32,20 +38,37 @@ const config = {
       minimize: true,
       debug: false,
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      beautify: false
-    }),
     new webpack.DefinePlugin({ 'process.env': { NODE_ENV: JSON.stringify('production') } }),
     new ExtractTextPlugin({ filename: './styles/style.css', disable: false, allChunks: true }),
     new CopyWebpackPlugin([{ from: './vendors', to: 'vendors' }]),
   ],
+
+  optimization: {
+    runtimeChunk: false,
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+      },
+    },
+    minimizer: [
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: true
+      })
+    ]
+  },
 
   resolve: {
     extensions: ['.js', '.jsx'],
   },
 
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,

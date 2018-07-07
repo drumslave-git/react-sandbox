@@ -12,7 +12,9 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "precommit": "cross-env npm run lint && npm test",
-    "prepush": "cross-env npm run lint && npm test"
+    "prepush": "cross-env npm run lint && npm test",
+    "webpack:dev": "webpack --colors",
+    "webpack:prod": "webpack --config webpack.production.config.js --colors"
   },
   "author": "Kliment Petrov <kleopetroff@gmail.com>",
   "license": "MIT",
@@ -55,7 +57,7 @@
     "babel-preset-stage-2": "6.24.1",
     "copy-webpack-plugin": "4.5.2",
     "css-hot-loader": "1.3.9",
-    "css-loader": "0.28.11",
+    "css-loader": "1.0.0",
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
     "eslint": "4.19.0",
@@ -64,8 +66,8 @@
     "eslint-plugin-import": "2.13.0",
     "eslint-plugin-jsx-a11y": "6.1.0",
     "eslint-plugin-react": "7.10.0",
-    "extract-text-webpack-plugin": "3.0.2",
-    "file-loader": "1.1.10",
+    "extract-text-webpack-plugin": "4.0.0-beta.0",
+    "file-loader": "1.1.11",
     "html-webpack-plugin": "3.2.0",
     "husky": "0.15.0-rc.2",
     "jest": "22.1.0",
@@ -74,10 +76,12 @@
     "react-addons-test-utils": "15.6.2",
     "react-test-renderer": "16.4.1",
     "rimraf": "2.6.2",
-    "sass-loader": "6.0.7",
+    "sass-loader": "7.0.3",
     "style-loader": "0.21.0",
-    "url-loader": "1.0.0",
-    "webpack": "3.11.0",
-    "webpack-dev-server": "2.9.6"
+    "uglifyjs-webpack-plugin": "1.2.7",
+    "url-loader": "1.0.1",
+    "webpack": "4.15.1",
+    "webpack-cli": "3.0.8",
+    "webpack-dev-server": "3.1.4"
   }
 }
