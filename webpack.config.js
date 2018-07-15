@@ -4,8 +4,13 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const OpenBrowserPlugin = require('open-browser-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const config = {
+  stats: {
+    maxModules: 0
+  },
+  mode: 'development',
   devtool: 'cheap-module-eval-source-map',
 
   entry: [
@@ -30,7 +35,7 @@ const config = {
     historyApiFallback: true,
     publicPath: '/'
   },
-  
+
   resolve: {
     extensions: ['.js', '.jsx'],
   },
@@ -134,6 +139,7 @@ const config = {
   },
 
   plugins: [
+    new webpack.NamedModulesPlugin(),
     new webpack.LoaderOptionsPlugin({
       test: /\.jsx?$/,
       options: {
@@ -148,7 +154,7 @@ const config = {
     new CopyWebpackPlugin([{ from: 'vendors', to: 'vendors' }]),
     new OpenBrowserPlugin({ url: 'http://localhost:8080' }),
     new webpack.HotModuleReplacementPlugin(),
-  ],
+  ]
 };
 
 module.exports = config;
