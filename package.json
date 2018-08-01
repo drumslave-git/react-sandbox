@@ -76,7 +76,7 @@
     "react-addons-test-utils": "15.6.2",
     "react-test-renderer": "16.4.1",
     "rimraf": "2.6.2",
-    "sass-loader": "7.0.3",
+    "sass-loader": "7.1.0",
     "style-loader": "0.21.0",
     "uglifyjs-webpack-plugin": "1.2.7",
     "url-loader": "1.0.1",
