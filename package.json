@@ -14,7 +14,8 @@
     "precommit": "cross-env npm run lint && npm test",
     "prepush": "cross-env npm run lint && npm test",
     "webpack:dev": "webpack --colors",
-    "webpack:prod": "webpack --config webpack.production.config.js --colors"
+    "webpack:prod": "webpack --config webpack.production.config.js --colors",
+    "heroku-postbuild": "npm run production"
   },
   "author": "Kliment Petrov <kleopetroff@gmail.com>",
   "license": "MIT",
