@@ -9,7 +9,7 @@ Simple and optimized React boilerplate. It includes:
 - [x] React Router v4
 - [x] Component testing using [Enzyme](https://github.com/airbnb/enzyme) and [Jest](https://facebook.github.io/jest)
 - [x] Code Coverage
-- [x] Latest Webpack (v.4.16.5) and Webpack Dev Server (v.3.1.4) with Scope Hoisting enabled
+- [x] Latest Webpack (v.4.16.5), Babel 7 and Webpack Dev Server (v.4.19.1) with Scope Hoisting enabled
 - [x] Hot Module Replacement using [react-hot-loader](https://github.com/gaearon/react-hot-loader)
 - [x] ES6 linting with continuous linting on file change
 - [x] SASS support
