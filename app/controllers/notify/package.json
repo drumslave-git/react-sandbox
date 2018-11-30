@@ -1,0 +1,8 @@
+{
+  "name": "notify",
+  "version": "0.0.1",
+  "main": "./notify.js",
+  "dependencies": {
+    
+  }
+}

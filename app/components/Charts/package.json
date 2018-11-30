@@ -1,0 +1,8 @@
+{
+  "name": "Charts",
+  "version": "0.0.1",
+  "main": "./Charts.js",
+  "dependencies": {
+    
+  }
+}

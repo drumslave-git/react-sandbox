@@ -1,0 +1,8 @@
+{
+  "name": "user",
+  "version": "0.0.1",
+  "main": "./user.js",
+  "dependencies": {
+    
+  }
+}

@@ -38,7 +38,16 @@
     }
   },
   "dependencies": {
+    "@material-ui/core": "^3.2.0",
+    "@material-ui/icons": "^3.0.1",
+    "axios": "^0.18.0",
+    "babel-preset-react": "^6.24.1",
+    "classnames": "^2.2.6",
     "cross-env": "5.2.0",
+    "echarts": "^4.2.0-rc.2",
+    "echarts-for-react": "^2.0.15-beta.0",
+    "eventemitter3": "^3.1.0",
+    "prop-types": "^15.6.2",
     "react": "16.5.2",
     "react-dom": "16.5.2",
     "react-hot-loader": "4.3.11",
@@ -47,6 +56,8 @@
   "devDependencies": {
     "@babel/cli": "7.1.1",
     "@babel/core": "^7.1.1",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/preset-env": "7.1.0",
     "@babel/preset-react": "7.0.0",
     "@babel/preset-stage-2": "7.0.0",

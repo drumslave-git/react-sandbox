@@ -1,0 +1,8 @@
+{
+  "name": "Header",
+  "version": "0.0.1",
+  "main": "./Header.js",
+  "dependencies": {
+    
+  }
+}

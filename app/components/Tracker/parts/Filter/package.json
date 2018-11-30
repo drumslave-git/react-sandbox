@@ -1,0 +1,8 @@
+{
+  "name": "Filter",
+  "version": "0.0.1",
+  "main": "./Filter.jsx",
+  "dependencies": {
+    
+  }
+}

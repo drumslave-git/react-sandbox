@@ -1,0 +1,8 @@
+{
+  "name": "Actions",
+  "version": "0.0.1",
+  "main": "./Actions.jsx",
+  "dependencies": {
+    
+  }
+}
