@@ -15,7 +15,7 @@ const config = {
 
     entry: [
         'react-hot-loader/patch',
-        'webpack-dev-server/client?http://localhost:9090',
+        `webpack-dev-server/client?http://localhost:${process.env.PORT || 9090}`,
         'webpack/hot/only-dev-server',
         './main.js',
         './assets/scss/main.scss',
@@ -34,7 +34,7 @@ const config = {
         contentBase: resolve(__dirname, 'build'),
         historyApiFallback: true,
         publicPath: '/',
-        port: 9090,
+        port: process.env.PORT || 9090,
         proxy: {
             '/api': {
                 target: 'https://redmine.enaikoon.de',
