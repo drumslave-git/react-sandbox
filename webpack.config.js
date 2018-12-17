@@ -3,7 +3,7 @@ const { resolve } = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const OpenBrowserPlugin = require('open-browser-webpack-plugin');
+// const OpenBrowserPlugin = require('open-browser-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const config = {
@@ -170,7 +170,7 @@ const config = {
         new webpack.optimize.ModuleConcatenationPlugin(),
         new ExtractTextPlugin({ filename: './styles/style.css', disable: false, allChunks: true }),
         new CopyWebpackPlugin([{ from: 'vendors', to: 'vendors' }]),
-        new OpenBrowserPlugin({ url: 'http://localhost:9090' }),
+        // new OpenBrowserPlugin({ url: 'http://localhost:9090' }),
         new webpack.HotModuleReplacementPlugin(),
     ],
 };
