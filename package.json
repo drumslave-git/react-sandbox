@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node server.js",
+    "start:dist": "npm run production && node server.js",
     "dev": "webpack-dev-server --config webpack.dev.config.js",
     "clean": "rimraf dist",
     "production": "cross-env npm run clean && webpack --config webpack.production.config.js --progress --profile --colors",

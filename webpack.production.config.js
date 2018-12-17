@@ -10,7 +10,7 @@ const config = {
         maxModules: 0,
     },
     mode: 'production',
-    devtool: 'source-map',
+    devtool: 'cheap-module-source-map',
 
     entry: [
         './main.js',

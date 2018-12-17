@@ -10,6 +10,6 @@ app.get('*', (request, response) => {
     response.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-var server = app.listen(app.get('port'), () => {
+const server = app.listen(app.get('port'), () => {
     console.log('listening on port ', server.address().port);
 });

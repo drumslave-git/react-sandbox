@@ -25,6 +25,8 @@ import Notify from './parts/Notify';
 
 const EE = new EventEmitter();
 
+const apiURL = (process.env.NODE_ENV === 'production') ? 'https://redmine.enaikoon.de' : '/api';
+
 const clearState = {
     auth: {
         username: null,
@@ -111,7 +113,7 @@ class Tracker extends React.Component {
             return;
         }
         EE.emit('beforeRequest');
-        axios.get(`/api/search.json?q=${q}&issues=1&limit=10`, {
+        axios.get(`${apiURL}/search.json?q=${q}&issues=1&limit=10`, {
             auth,
         }).then(({ data: { results }, status }) => {
         // axios.get(`/api/issues/auto_complete?term=${q}`).then(({ data, status }) => {
@@ -152,7 +154,7 @@ class Tracker extends React.Component {
             return;
         }
         EE.emit('beforeRequest');
-        axios.get(`/api/${url}.json?limit=${LIMITS[part]}${add}`, {
+        axios.get(`${apiURL}/${url}.json?limit=${LIMITS[part]}${add}`, {
             auth,
         }).then(({ data, status }) => {
             EE.emit('afterRequest');
@@ -292,7 +294,7 @@ class Tracker extends React.Component {
         }
         EE.emit('beforeRequest');
         axios.put(
-            `/api/issues/${issueId}.json`,
+            `${apiURL}/issues/${issueId}.json`,
             {
                 issue: {
                     notes: note,
@@ -370,7 +372,7 @@ class Tracker extends React.Component {
         const { auth } = this.state;
         EE.emit('beforeRequest');
         axios.get(
-            `/api/issues/${id}.json`,
+            `${apiURL}/issues/${id}.json`,
             {
                 auth,
             },
