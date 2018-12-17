@@ -25,7 +25,8 @@ import Notify from './parts/Notify';
 
 const EE = new EventEmitter();
 
-const apiURL = (process.env.NODE_ENV === 'production') ? 'https://redmine.enaikoon.de' : '/api';
+// const apiURL = (process.env.NODE_ENV === 'production') ? 'https://redmine.enaikoon.de' : '/api';
+const apiURL = '/api';
 
 const clearState = {
     auth: {
