@@ -7,7 +7,8 @@
     "node": "8.11.1"
   },
   "scripts": {
-    "start": "webpack-dev-server",
+    "start": "./node_modules/webpack/bin/webpack.js -p --progress && node server.js",
+    "dev": "webpack-dev-server",
     "clean": "rimraf dist",
     "production": "cross-env npm run clean && webpack --config webpack.production.config.js --progress --profile --colors",
     "lint": "eslint ./app/**/**.js",
@@ -48,6 +49,7 @@
     "echarts": "^4.2.0-rc.2",
     "echarts-for-react": "^2.0.15-beta.0",
     "eventemitter3": "^3.1.0",
+    "express": "^4.16.4",
     "prop-types": "^15.6.2",
     "react": "16.5.2",
     "react-color": "^2.14.1",
