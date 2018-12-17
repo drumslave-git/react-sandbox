@@ -15,7 +15,7 @@ const config = {
 
     entry: [
         'react-hot-loader/patch',
-        'webpack-dev-server/client?http://localhost:8080',
+        'webpack-dev-server/client?http://localhost:9090',
         'webpack/hot/only-dev-server',
         './main.js',
         './assets/scss/main.scss',
@@ -51,6 +51,10 @@ const config = {
 
     module: {
         rules: [
+            {
+                test: /\.css$/,
+                loader: ['style-loader', 'css-loader'],
+            },
             {
                 enforce: 'pre',
                 test: /\.jsx?$/,
@@ -166,7 +170,7 @@ const config = {
         new webpack.optimize.ModuleConcatenationPlugin(),
         new ExtractTextPlugin({ filename: './styles/style.css', disable: false, allChunks: true }),
         new CopyWebpackPlugin([{ from: 'vendors', to: 'vendors' }]),
-        new OpenBrowserPlugin({ url: 'http://localhost:8080' }),
+        new OpenBrowserPlugin({ url: 'http://localhost:9090' }),
         new webpack.HotModuleReplacementPlugin(),
     ],
 };

@@ -1,0 +1,41 @@
+[
+  {
+    "componentId": 1,
+    "children": [
+      {
+        "componentId": 5,
+        "children": [
+          {
+            "componentId": 3,
+            "children": [
+              {"componentId": 7}
+            ]
+          }
+        ]
+      },
+      {
+        "componentId": 6,
+        "children": [
+          {
+            "componentId": 3,
+            "children": [
+              {"componentId": 4}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "componentId": 2,
+    "children": [
+      {
+        "componentId": 3,
+        "children": [
+          {"componentId": 4},
+          {"componentId": 7}
+        ]
+      }
+    ]
+  }
+]

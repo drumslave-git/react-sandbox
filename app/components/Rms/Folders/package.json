@@ -1,0 +1,8 @@
+{
+  "name": "Folders",
+  "main": "./Folders.js",
+  "version": "1.0.0",
+  "dependencies": {
+    
+  }
+}

@@ -11,8 +11,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "precommit": "cross-env npm run lint && npm test",
-    "prepush": "cross-env npm run lint && npm test",
     "webpack:dev": "webpack --colors",
     "webpack:prod": "webpack --config webpack.production.config.js --colors",
     "heroku-postbuild": "npm run production"
@@ -49,9 +47,12 @@
     "eventemitter3": "^3.1.0",
     "prop-types": "^15.6.2",
     "react": "16.5.2",
+    "react-color": "^2.14.1",
     "react-dom": "16.5.2",
     "react-hot-loader": "4.3.11",
-    "react-router-dom": "4.3.0"
+    "react-router-dom": "4.3.0",
+    "react-sortable-tree": "^2.6.0",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@babel/cli": "7.1.1",

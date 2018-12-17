@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "portlets",
+    "color": "red"
+  },
+  {
+    "id": 2,
+    "name": "common",
+    "color": "blue"
+  },
+  {
+    "id": 3,
+    "name": "toolbar",
+    "color": "green"
+  },
+  {
+    "id": 4,
+    "name": "pin button",
+    "color": "green"
+  },
+  {
+    "id": 5,
+    "name": "table",
+    "color": "green"
+  },
+  {
+    "id": 6,
+    "name": "chart",
+    "color": "green"
+  },
+  {
+    "id": 7,
+    "name": "search",
+    "color": "yellow"
+  }
+]

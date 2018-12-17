@@ -1,0 +1,8 @@
+{
+  "name": "Rms",
+  "main": "./Rms.js",
+  "version": "1.0.0",
+  "dependencies": {
+    
+  }
+}
