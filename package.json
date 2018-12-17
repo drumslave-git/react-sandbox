@@ -3,6 +3,9 @@
   "version": "2.1.0",
   "description": "Minimalistic ES6 React boilerplate",
   "main": "index.js",
+  "engines": {
+    "node": "8.11.1"
+  },
   "scripts": {
     "start": "webpack-dev-server",
     "clean": "rimraf dist",
