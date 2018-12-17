@@ -35,14 +35,6 @@ const config = {
         historyApiFallback: true,
         publicPath: '/',
         port: process.env.PORT || 9090,
-        proxy: {
-            '/api': {
-                target: 'https://redmine.enaikoon.de',
-                changeOrigin: true,
-                pathRewrite: { '^/api': '' },
-                secure: false,
-            },
-        },
     },
 
     resolve: {
