@@ -52,9 +52,9 @@ class Rms extends React.Component {
     }
 
     // eslint-disable-next-line react/sort-comp
-    initFirbaseDB = (collback = () => {}) => {
-        const email = 'george.tislenko@gmail.com';
-        const password = '9379992goga';
+    initFirbaseDB = (callback = () => {}) => {
+        const email = '';
+        const password = '';
         firebase.initializeApp(FirebaseConfig);
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
@@ -64,7 +64,7 @@ class Rms extends React.Component {
                 this.db.settings({
                     timestampsInSnapshots: true,
                 });
-                collback();
+                callback();
             } else {
                 firebase.auth().signInWithEmailAndPassword(email, password).catch((error) => {
                     // Handle Errors here.
