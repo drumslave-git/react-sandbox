@@ -21,7 +21,7 @@ const styles = theme => ({
     },
 });
 
-class ComponentEdit extends React.Component {
+class ComponentEdit extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -31,6 +31,9 @@ class ComponentEdit extends React.Component {
                 name: (props.component && props.component.name) || '',
                 id: (props.component && props.component.id) || null,
             },
+            presetColors: props.components
+                .map(component => component.color)
+                .filter((value, index, self) => self.indexOf(value) === index),
         };
         this.nameInput = React.createRef();
     }
@@ -43,6 +46,9 @@ class ComponentEdit extends React.Component {
                 name: (props.component && props.component.name) || '',
                 id: (props.component && props.component.id) || null,
             },
+            presetColors: props.components
+                .map(component => component.color)
+                .filter((value, index, self) => self.indexOf(value) === index),
         });
     }
 
@@ -66,8 +72,8 @@ class ComponentEdit extends React.Component {
     };
 
     render() {
-        const { components = [], parentComponent, hideEditor } = this.props;
-        const { editorData = {} } = this.state;
+        const { hideEditor } = this.props;
+        const { editorData = {}, presetColors = [] } = this.state;
         return (
             <Dialog
                 aria-labelledby="form-dialog-title"
@@ -76,11 +82,6 @@ class ComponentEdit extends React.Component {
             >
                 <DialogTitle id="form-dialog-title">
                     Component
-                    {parentComponent !== null && (
-                        <span>
-                            {` -> ${parentComponent.name}`}
-                        </span>
-                    )}
                 </DialogTitle>
                 <DialogContent>
                     <TextField
@@ -92,11 +93,7 @@ class ComponentEdit extends React.Component {
                     <SketchPicker
                         color={editorData.color}
                         disableAlpha
-                        presetColors={
-                            components
-                                .map(component => component.color)
-                                .filter((value, index, self) => self.indexOf(value) === index)
-                        }
+                        presetColors={presetColors}
                         onChangeComplete={this.handleChangeComplete}
                     />
                 </DialogContent>
@@ -115,14 +112,11 @@ class ComponentEdit extends React.Component {
 
 ComponentEdit.defaultProps = {
     component: null,
-    parentComponent: null,
 };
 
 ComponentEdit.propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     component: PropTypes.object,
-    // eslint-disable-next-line react/forbid-prop-types
-    parentComponent: PropTypes.object,
     // eslint-disable-next-line react/forbid-prop-types
     components: PropTypes.array.isRequired,
     show: PropTypes.bool.isRequired,
