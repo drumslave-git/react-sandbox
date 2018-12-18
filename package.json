@@ -51,6 +51,7 @@
     "echarts-for-react": "^2.0.15-beta.0",
     "eventemitter3": "^3.1.0",
     "express": "^4.16.4",
+    "firebase": "^5.7.0",
     "prop-types": "^15.6.2",
     "react": "16.5.2",
     "react-color": "^2.14.1",

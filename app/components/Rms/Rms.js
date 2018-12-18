@@ -1,5 +1,7 @@
 import React from 'react';
 import uuid from 'uuid';
+import firebase from 'firebase';
+// import { getTreeFromFlatData } from 'react-sortable-tree';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -22,6 +24,17 @@ const SCOPES = 'https://www.googleapis.com/auth/drive';
 
 // eslint-disable-next-line no-undef
 const GAPI = gapi;
+
+const FirebaseConfig = {
+    apiKey: 'AIzaSyCCQ-L-ytJY9s6AZXUuEwBAURlbg2ryt0g',
+    authDomain: 'ginstr-rms.firebaseapp.com',
+    databaseURL: 'https://ginstr-rms.firebaseio.com',
+    projectId: 'ginstr-rms',
+    storageBucket: 'ginstr-rms.appspot.com',
+    messagingSenderId: '499751327280',
+};
+
+const USE_FB = false;
 
 const componentsFileId = '1M6jD5sz81NU0cpWlZeclLF000x0OAF2V';
 const relationsFileId = '1be4l-asOKweBTFoVpSEKlsJt_2mKZY94';
@@ -53,28 +66,90 @@ class Rms extends React.Component {
             parentComponent: null,
             draftData: false,
         };
+        if (USE_FB) {
+            this.db = null;
+        }
     }
+
+    // eslint-disable-next-line react/sort-comp
+    initFirbaseDB = (collback = () => {}) => {
+        const email = 'george.tislenko@gmail.com';
+        const password = '9379992goga';
+        firebase.initializeApp(FirebaseConfig);
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                console.log(user);
+                // const userId = firebase.auth().currentUser.uid;
+                this.db = firebase.firestore();
+                this.db.settings({
+                    timestampsInSnapshots: true,
+                });
+                collback();
+            } else {
+                firebase.auth().signInWithEmailAndPassword(email, password).catch((error) => {
+                    // Handle Errors here.
+                    console.log(error);
+                    // ...
+                });
+            }
+        });
+    };
 
     componentDidMount() {
-        GAPI.load('client', this.start);
+        if (!USE_FB) {
+            GAPI.load('client', this.start);
+        } else {
+            this.initFirbaseDB(this.getFiles);
+        }
     }
 
-    getData() {
-        GAPI.client.drive.files.get({
-            fileId: componentsFileId,
-            alt: 'media',
-        }).then((response) => {
-            this.setState({ data: response.result });
-        });
-    }
+    getData = () => {
+        if (!USE_FB) {
+            GAPI.client.drive.files.get({
+                fileId: componentsFileId,
+                alt: 'media',
+            }).then((response) => {
+                this.setState({ data: response.result });
+            });
+        } else {
+            this.db.collection('components').get().then((querySnapshot) => {
+                const data = [];
+                querySnapshot.forEach((doc) => {
+                    const { id } = doc;
+                    const { name, color } = doc.data();
+                    data.push({
+                        id,
+                        name,
+                        color,
+                    });
+                });
+                this.setState({ data });
+            });
+        }
+    };
 
-    getRelations() {
-        GAPI.client.drive.files.get({
-            fileId: relationsFileId,
-            alt: 'media',
-        }).then((response) => {
-            this.setState({ relations: response.result });
-        });
+    getRelations = () => {
+        if (!USE_FB) {
+            GAPI.client.drive.files.get({
+                fileId: relationsFileId,
+                alt: 'media',
+            }).then((response) => {
+                this.setState({ relations: response.result });
+            });
+        } else {
+            this.db.collection('relations').get().then((querySnapshot) => {
+                const relations = [];
+                querySnapshot.forEach((doc) => {
+                    // const { id } = doc;
+                    const { name, color } = doc.data();
+                    relations.push({
+                        name,
+                        color,
+                    });
+                });
+                this.setState({ relations });
+            });
+        }
     }
 
     getCatalog() {
@@ -99,12 +174,8 @@ class Rms extends React.Component {
             discoveryDocs: DISCOVERY_DOCS,
             scope: SCOPES,
         }).then(() => {
-            try {
-                this.getFiles();
-            } catch (e) {
-                GAPI.auth2.getAuthInstance().isSignedIn.listen(this.updateSigninStatus);
-                GAPI.auth2.getAuthInstance().signIn();
-            }
+            GAPI.auth2.getAuthInstance().isSignedIn.listen(this.updateSigninStatus);
+            this.updateSigninStatus(GAPI.auth2.getAuthInstance().isSignedIn.get());
         });
     };
 
