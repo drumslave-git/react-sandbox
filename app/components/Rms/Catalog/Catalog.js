@@ -40,7 +40,7 @@ class Catalog extends Component {
     removeTreeNode = (info) => {
         const { data, catalog, removeComponent } = this.props;
         const { path, node, parentNode } = info;
-        if (parentNode.id === 'backlog') {
+        if (parentNode !== null && parentNode.id === 'backlog') {
             removeComponent(node.id);
         } else {
             this.updateTree(removeNodeAtPath({
@@ -98,7 +98,7 @@ class Catalog extends Component {
                             if (info.node.id !== 'backlog') {
                                 if (info.parentNode === null || info.parentNode.id !== 'backlog') {
                                     buttons.push(
-                                        <IconButton aria-label="Add" onClick={() => showEditor({}, info.node.id)}>
+                                        <IconButton aria-label="Add" onClick={() => showEditor({}, info.node.rid)}>
                                             <AddIcon />
                                         </IconButton>,
                                     );

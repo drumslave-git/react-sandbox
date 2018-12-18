@@ -1,4 +1,5 @@
 import React from 'react';
+import { walk as walkTreeLib } from 'react-sortable-tree';
 
 class treeHelper {
     constructor(titleComponent, treeType, showComponentWithoutRelations = false) {
@@ -7,7 +8,7 @@ class treeHelper {
         this.showComponentWithoutRelations = showComponentWithoutRelations;
     }
 
-    static searchTree(root, id, pathResult = []) {
+    static searchTree(root, rid, pathResult = []) {
         const stack = [];
         let node;
         let ii;
@@ -15,7 +16,7 @@ class treeHelper {
 
         while (stack.length > 0) {
             node = stack.pop();
-            if (node.componentId === id) {
+            if (node.rid === rid) {
                 // Found it!
                 return node;
             // eslint-disable-next-line no-else-return
@@ -42,6 +43,7 @@ class treeHelper {
                 />
             ),
             type: this.treeType,
+            rid: item ? item.rid : undefined,
             expanded: item && !!item.expanded,
         };
     }
@@ -73,7 +75,12 @@ class treeHelper {
     }
 
     walkBack(components, item) {
-        const { id: componentId, children, expanded } = item;
+        const {
+            id: componentId,
+            children,
+            rid,
+            expanded,
+        } = item;
         let component;
         if (componentId !== 'backlog') {
             component = components.find(comp => comp.id === componentId);
@@ -88,6 +95,7 @@ class treeHelper {
         }
         const node = {
             componentId,
+            rid,
             expanded,
             children: [],
         };
@@ -110,10 +118,10 @@ class treeHelper {
             }
         });
         if (this.showComponentWithoutRelations) {
+            const idx = relations.findIndex(rel => rel.componentId === 'backlog');
             const unusedComponents = components
                 .filter(comp => !usedComponentsIds.includes(comp.id));
             if (unusedComponents.length) {
-                const idx = relations.findIndex(rel => rel.componentId === 'backlog');
                 if (idx === -1) {
                     roots.push({
                         title: (
@@ -127,6 +135,8 @@ class treeHelper {
                         roots[idx].children.push(this.componentToNode(comp));
                     });
                 }
+            } else if (idx !== -1 && roots[idx].children.length === 0) {
+                roots.splice(idx, 1);
             }
         }
         return roots;
@@ -141,6 +151,30 @@ class treeHelper {
             }
         });
         return roots;
+    }
+
+    static treeToFlat(treeData) {
+        const flatData = [];
+        walkTreeLib({
+            treeData,
+            getNodeKey: node => node.rid,
+            ignoreCollapsed: false,
+            callback: (nodeInfo) => {
+                const { node } = nodeInfo;
+                let parentId = '';
+                if (nodeInfo.parentNode) {
+                    parentId = nodeInfo.parentNode.rid;
+                }
+                flatData.push({
+                    rid: node.rid,
+                    parentId,
+                    componentId: node.componentId,
+                    expanded: node.expanded,
+                    order: flatData.length,
+                });
+            },
+        });
+        return flatData;
     }
 }
 

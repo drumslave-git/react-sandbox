@@ -1,29 +1,17 @@
 import React from 'react';
-import uuid from 'uuid';
-import firebase from 'firebase';
-// import { getTreeFromFlatData } from 'react-sortable-tree';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+import { getTreeFromFlatData, map as mapTree, toggleExpandedForAll } from 'react-sortable-tree';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import SaveIcon from '@material-ui/icons/Save';
 import Folders from './Folders';
-import Components from './Components';
 import Catalog from './Catalog';
 import ComponentEdit from './ComponentEdit';
+import Toolbar from './Toolbar';
 import TreeHelper from './treeHelper';
-
-const CLIENT_ID = '499751327280-8lvkiah8do2ocdadqchqdij624j6rdni.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyBrVQ1m81Ac_qCC19d5M1OPfZRvU6pJklE';
-
-// Array of API discovery doc URLs for APIs used by the quickstart
-const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
-
-// Authorization scopes required by the API; multiple scopes can be
-// included, separated by spaces.
-const SCOPES = 'https://www.googleapis.com/auth/drive';
-
-// eslint-disable-next-line no-undef
-const GAPI = gapi;
 
 const FirebaseConfig = {
     apiKey: 'AIzaSyCCQ-L-ytJY9s6AZXUuEwBAURlbg2ryt0g',
@@ -33,12 +21,6 @@ const FirebaseConfig = {
     storageBucket: 'ginstr-rms.appspot.com',
     messagingSenderId: '499751327280',
 };
-
-const USE_FB = false;
-
-const componentsFileId = '1M6jD5sz81NU0cpWlZeclLF000x0OAF2V';
-const relationsFileId = '1be4l-asOKweBTFoVpSEKlsJt_2mKZY94';
-const catalogFileId = '1YjDeHyoKHfR9BRnr0zNu6An8M62SAbcA';
 
 const styles = theme => ({
     root: {
@@ -50,7 +32,7 @@ const styles = theme => ({
     },
     paper: {
         padding: theme.spacing.unit * 2,
-        height: '100%',
+        // height: '100%',
         // color: theme.palette.text.secondary,
     },
 });
@@ -63,12 +45,10 @@ class Rms extends React.Component {
             relations: null,
             catalog: null,
             editingComponent: null,
-            parentComponent: null,
+            parentId: null,
             draftData: false,
         };
-        if (USE_FB) {
-            this.db = null;
-        }
+        this.db = null;
     }
 
     // eslint-disable-next-line react/sort-comp
@@ -78,7 +58,7 @@ class Rms extends React.Component {
         firebase.initializeApp(FirebaseConfig);
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
-                console.log(user);
+                // console.log(user);
                 // const userId = firebase.auth().currentUser.uid;
                 this.db = firebase.firestore();
                 this.db.settings({
@@ -88,6 +68,7 @@ class Rms extends React.Component {
             } else {
                 firebase.auth().signInWithEmailAndPassword(email, password).catch((error) => {
                     // Handle Errors here.
+                    // eslint-disable-next-line no-console
                     console.log(error);
                     // ...
                 });
@@ -96,69 +77,61 @@ class Rms extends React.Component {
     };
 
     componentDidMount() {
-        if (!USE_FB) {
-            GAPI.load('client', this.start);
-        } else {
-            this.initFirbaseDB(this.getFiles);
-        }
+        this.initFirbaseDB(this.getFiles);
     }
 
     getData = () => {
-        if (!USE_FB) {
-            GAPI.client.drive.files.get({
-                fileId: componentsFileId,
-                alt: 'media',
-            }).then((response) => {
-                this.setState({ data: response.result });
-            });
-        } else {
-            this.db.collection('components').get().then((querySnapshot) => {
-                const data = [];
-                querySnapshot.forEach((doc) => {
-                    const { id } = doc;
-                    const { name, color } = doc.data();
-                    data.push({
-                        id,
-                        name,
-                        color,
-                    });
+        this.db.collection('components').get().then((querySnapshot) => {
+            const data = [];
+            querySnapshot.forEach((doc) => {
+                const { id } = doc;
+                const { name, color } = doc.data();
+                data.push({
+                    id,
+                    name,
+                    color,
                 });
-                this.setState({ data });
             });
-        }
+            this.setState({ data });
+        });
+    };
+
+    getStructure = (collection) => {
+        this.db.collection(collection).get().then((querySnapshot) => {
+            const res = [];
+            querySnapshot.forEach((doc) => {
+                const { id } = doc;
+                const {
+                    componentId,
+                    parentId,
+                    expanded = false,
+                    order = 0,
+                } = doc.data();
+                res.push({
+                    rid: id,
+                    parentId,
+                    componentId,
+                    expanded,
+                    order,
+                });
+            });
+            res.sort((a, b) => a.order - b.order);
+            this.setState({
+                [collection]: getTreeFromFlatData({
+                    flatData: res,
+                    getKey: node => node.rid,
+                    rootKey: '',
+                }),
+            });
+        });
     };
 
     getRelations = () => {
-        if (!USE_FB) {
-            GAPI.client.drive.files.get({
-                fileId: relationsFileId,
-                alt: 'media',
-            }).then((response) => {
-                this.setState({ relations: response.result });
-            });
-        } else {
-            this.db.collection('relations').get().then((querySnapshot) => {
-                const relations = [];
-                querySnapshot.forEach((doc) => {
-                    // const { id } = doc;
-                    const { name, color } = doc.data();
-                    relations.push({
-                        name,
-                        color,
-                    });
-                });
-                this.setState({ relations });
-            });
-        }
-    }
+        this.getStructure('relations');
+    };
 
     getCatalog() {
-        GAPI.client.drive.files.get({
-            fileId: catalogFileId,
-            alt: 'media',
-        }).then((response) => {
-            this.setState({ catalog: response.result });
-        });
+        this.getStructure('catalog');
     }
 
     getFiles = () => {
@@ -167,55 +140,65 @@ class Rms extends React.Component {
         this.getCatalog();
     };
 
-    start = () => {
-        GAPI.client.init({
-            apiKey: API_KEY,
-            clientId: CLIENT_ID,
-            discoveryDocs: DISCOVERY_DOCS,
-            scope: SCOPES,
-        }).then(() => {
-            GAPI.auth2.getAuthInstance().isSignedIn.listen(this.updateSigninStatus);
-            this.updateSigninStatus(GAPI.auth2.getAuthInstance().isSignedIn.get());
-        });
-    };
-
-    updateSigninStatus = (isSignedIn) => {
-        if (isSignedIn) {
-            this.getFiles();
-        } else {
-            GAPI.auth2.getAuthInstance().signIn();
-        }
-    };
-
     handleComponentSave = (component, id = null) => {
-        const { data, catalog, parentComponent } = this.state;
+        const { data, catalog, parentId } = this.state;
         const updatedData = [...data];
         const updatedCatalog = [...catalog];
-        let newId = null;
         if (id !== null) {
             const idx = data.findIndex(comp => comp.id === id);
             updatedData[idx] = {
                 ...component,
                 id,
             };
-        } else {
-            newId = uuid();
-            updatedData.unshift({
+            this.updateComponents(updatedData, true);
+            this.setState({
+                draftData: true,
+            });
+            this.db.collection('components').doc(id).set({
                 ...component,
-                id: newId,
+            }).then(() => {
+                this.setState({
+                    draftData: false,
+                });
+            });
+        } else {
+            this.setState({
+                draftData: true,
+            });
+            this.db.collection('components').add({
+                ...component,
+            }).then((ref) => {
+                this.setState({
+                    draftData: false,
+                });
+                updatedData.push({
+                    ...component,
+                    id: ref.id,
+                });
+                this.updateComponents(updatedData, true);
+                if (parentId !== null) {
+                    this.setState({
+                        draftData: true,
+                    });
+                    const node = TreeHelper.searchTree({
+                        componentId: 'root',
+                        children: updatedCatalog,
+                    }, parentId);
+                    this.db.collection('catalog').add({
+                        componentId: ref.id,
+                        parentId,
+                    }).then(() => {
+                        this.setState({
+                            draftData: false,
+                        });
+                    });
+                    node.children.push({
+                        componentId: ref.id,
+                    });
+                    this.updateCatalog(updatedCatalog, true);
+                }
             });
         }
-        if (parentComponent !== null && newId !== null) {
-            const node = TreeHelper.searchTree({
-                componentId: 'root',
-                children: updatedCatalog,
-            }, parentComponent.id);
-            node.children.push({
-                componentId: newId,
-            });
-            this.updateCatalog(updatedCatalog);
-        }
-        this.updateComponents(updatedData);
     };
 
     removeComponent = (id) => {
@@ -224,71 +207,120 @@ class Rms extends React.Component {
         const idx = data.findIndex(comp => comp.id === id);
         if (idx !== -1) {
             updatedData.splice(idx, 1);
-            this.updateComponents(updatedData);
+            this.updateComponents(updatedData, true);
+            this.setState({ draftData: true });
+            this.db.collection('components').doc(id).delete().then(() => {
+                this.setState({ draftData: false });
+            });
         }
     };
 
-    addToRelations = (component) => {
-        const { relations } = this.state;
-        const updatedRelations = [...relations];
+    // addToRelations = (component) => {
+    //     const { relations } = this.state;
+    //     const updatedRelations = [...relations];
+    //
+    //     updatedRelations.unshift({
+    //         componentId: component.id,
+    //         children: [],
+    //     });
+    //     this.updateRelations(updatedRelations);
+    // };
 
-        updatedRelations.unshift({
-            componentId: component.id,
-            children: [],
-        });
-        this.updateRelations(updatedRelations);
-    };
-
-    updateRelations = (relations) => {
+    updateComponents = (
+        data,
+        dirty = false,
+    ) => {
         this.setState({
-            relations,
-            draftData: true,
-        });
-
-        GAPI.client.request({
-            path: `/upload/drive/v3/files/${relationsFileId}`,
-            method: 'PATCH',
-            params: {
-                uploadType: 'media',
-            },
-            body: relations,
-        }).then(() => {
-            this.setState({
-                draftData: false,
-            });
+            editingComponent: null,
+            parentId: null,
+            data,
+            draftData: !dirty,
         });
     };
 
-    updateCatalog = (catalog) => {
-        const filteredCatalog = catalog.filter(i => i.componentId !== 'backlog');
+    updateStructure = (collection, draftData, dirty = false) => {
+        const { [collection]: oldDraftCollection } = this.state;
+        const data = draftData.filter(i => i.componentId !== 'backlog');
+        const oldCollection = oldDraftCollection.filter(i => i.componentId !== 'backlog');
         this.setState({
-            catalog,
-            draftData: true,
+            [collection]: draftData,
+            draftData: !dirty,
         });
-
-        GAPI.client.request({
-            path: `/upload/drive/v3/files/${catalogFileId}`,
-            method: 'PATCH',
-            params: {
-                uploadType: 'media',
-            },
-            body: filteredCatalog,
-        }).then(() => {
-            this.setState({
-                draftData: false,
+        if (!dirty) {
+            const flatData = TreeHelper.treeToFlat(data);
+            const oldFlatData = TreeHelper.treeToFlat(oldCollection);
+            const batch = this.db.batch();
+            oldFlatData.forEach((oldItem) => {
+                const item = flatData.find(i => i.rid === oldItem.rid);
+                if (oldItem.rid === undefined) {
+                    // data is not yet saved, but... it's ok
+                    return;
+                }
+                const ref = this.db.collection(collection).doc(oldItem.rid);
+                if (item === undefined) {
+                    batch.delete(ref);
+                } else {
+                    batch.set(ref, {
+                        parentId: item.parentId,
+                        componentId: item.componentId,
+                        expanded: item.expanded,
+                        order: item.order,
+                    });
+                }
             });
-        });
+            batch.commit().then(() => {
+                this.setState({ draftData: false });
+
+                if (flatData.length > oldFlatData.length) {
+                    flatData.forEach((item) => {
+                        const oldItem = oldFlatData.find(i => i.rid === item.rid);
+                        if (oldItem === undefined) {
+                            this.setState({ draftData: true });
+                            this.db.collection(collection).add({
+                                parentId: item.parentId,
+                                componentId: item.componentId,
+                                expanded: item.expanded,
+                                order: item.order,
+                            }).then((ref) => {
+                                const nextState = {
+                                    [collection]: mapTree({
+                                        treeData: draftData,
+                                        getNodeKey: node => node.rid,
+                                        callback: (info) => {
+                                            if (info.node.rid === undefined && info.node.componentId !== 'backlog') {
+                                                return {
+                                                    ...info.node,
+                                                    rid: ref.id,
+                                                };
+                                            }
+                                            return info.node;
+                                        },
+                                    }),
+                                    draftData: false,
+                                };
+                                this.setState(nextState);
+                                // Did i ever tell you the definition of "Insanity"??
+                                // this.getStructure(collection);
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    };
+
+    updateRelations = (relations, dirty = false) => {
+        this.updateStructure('relations', relations, dirty);
+    };
+
+    updateCatalog = (catalog, dirty = false) => {
+        this.updateStructure('catalog', catalog, dirty);
     };
 
     showEditor = (component = {}, parentId = null) => {
-        let parentComponent = null;
-        if (parentId !== null) {
-            const { data } = this.state;
-            parentComponent = data.find(comp => comp.id === parentId);
-        }
         this.setState({
             editingComponent: component,
-            parentComponent: parentComponent || null,
+            parentId,
         });
     };
 
@@ -298,27 +330,10 @@ class Rms extends React.Component {
         });
     };
 
-    updateComponents(components) {
-        this.setState({
-            data: components,
-            editingComponent: null,
-            parentComponent: null,
-            draftData: true,
-        });
-
-        GAPI.client.request({
-            path: `/upload/drive/v3/files/${componentsFileId}`,
-            method: 'PATCH',
-            params: {
-                uploadType: 'media',
-            },
-            body: components,
-        }).then(() => {
-            this.setState({
-                draftData: false,
-            });
-        });
-    }
+    handleToggleExpandedForAll = (collection, expanded = true) => {
+        const { [collection]: data } = this.state;
+        this.updateStructure(collection, toggleExpandedForAll({ treeData: data, expanded }));
+    };
 
     render() {
         // eslint-disable-next-line react/prop-types
@@ -329,7 +344,6 @@ class Rms extends React.Component {
             catalog,
             draftData,
             editingComponent,
-            parentComponent,
         } = this.state;
         if (data !== null) {
             return (
@@ -347,32 +361,36 @@ class Rms extends React.Component {
                         <Grid item xs={6}>
                             <Paper className={classes.paper}>
                                 {relations !== null && (
-                                    <Folders
-                                        data={data}
-                                        relations={relations}
-                                        updateRelations={this.updateRelations}
-                                    />
+                                    <React.Fragment>
+                                        <Toolbar
+                                            expandAll={() => this.handleToggleExpandedForAll('relations', true)}
+                                            expandNone={() => this.handleToggleExpandedForAll('relations', false)}
+                                        />
+                                        <Folders
+                                            data={data}
+                                            relations={relations}
+                                            updateRelations={this.updateRelations}
+                                        />
+                                    </React.Fragment>
                                 )}
                             </Paper>
                         </Grid>
                         <Grid item xs={6}>
                             <Paper className={classes.paper}>
-                                {catalog === null && (
-                                    <Components
-                                        components={data}
-                                        addToRelations={this.addToRelations}
-                                        removeComponent={this.removeComponent}
-                                        handleComponentSave={this.handleComponentSave}
-                                    />
-                                )}
                                 {catalog !== null && (
-                                    <Catalog
-                                        data={data}
-                                        catalog={catalog}
-                                        updateCatalog={this.updateCatalog}
-                                        showEditor={this.showEditor}
-                                        removeComponent={this.removeComponent}
-                                    />
+                                    <React.Fragment>
+                                        <Toolbar
+                                            expandAll={() => this.handleToggleExpandedForAll('catalog', true)}
+                                            expandNone={() => this.handleToggleExpandedForAll('catalog', false)}
+                                        />
+                                        <Catalog
+                                            data={data}
+                                            catalog={catalog}
+                                            updateCatalog={this.updateCatalog}
+                                            showEditor={this.showEditor}
+                                            removeComponent={this.removeComponent}
+                                        />
+                                    </React.Fragment>
                                 )}
                             </Paper>
                         </Grid>
@@ -381,7 +399,6 @@ class Rms extends React.Component {
                         handleComponentSave={this.handleComponentSave}
                         hideEditor={this.hideEditor}
                         component={editingComponent}
-                        parentComponent={parentComponent}
                         show={editingComponent !== null}
                         components={data}
                     />
