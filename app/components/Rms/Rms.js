@@ -182,6 +182,8 @@ class Rms extends React.Component {
     updateSigninStatus = (isSignedIn) => {
         if (isSignedIn) {
             this.getFiles();
+        } else {
+            GAPI.auth2.getAuthInstance().signIn();
         }
     };
 
