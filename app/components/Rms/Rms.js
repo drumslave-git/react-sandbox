@@ -1,4 +1,5 @@
 import React from 'react';
+// import uuid from 'uuid';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
@@ -6,12 +7,16 @@ import { getTreeFromFlatData, map as mapTree, toggleExpandedForAll } from 'react
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import SaveIcon from '@material-ui/icons/Save';
+import EventEmitter from 'eventemitter3';
 import Folders from './Folders';
 import Catalog from './Catalog';
 import ComponentEdit from './ComponentEdit';
+import AuthDialog from './AuthDialog';
 import Toolbar from './Toolbar';
+import Header from './Header';
 import TreeHelper from './treeHelper';
+
+const EE = new EventEmitter();
 
 const FirebaseConfig = {
     apiKey: 'AIzaSyCCQ-L-ytJY9s6AZXUuEwBAURlbg2ryt0g',
@@ -25,15 +30,21 @@ const FirebaseConfig = {
 const styles = theme => ({
     root: {
         flexGrow: 1,
-        height: '100%',
+        height: '100vh',
+        padding: '0.67em',
+        display: 'flex',
+        flexDirection: 'column',
+        boxSizing: 'border-box',
     },
     gridMain: {
-        margin: theme.spacing.unit * 2 * -1,
+        flexGrow: 1,
     },
     paper: {
         padding: theme.spacing.unit * 2,
-        // height: '100%',
-        // color: theme.palette.text.secondary,
+        height: '100%',
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
     },
 });
 
@@ -46,18 +57,33 @@ class Rms extends React.Component {
             catalog: null,
             editingComponent: null,
             parentId: null,
-            draftData: false,
+            needAuth: false,
+            searches: {
+                relations: {
+                    searchQuery: '',
+                    searchFocusIndex: 0,
+                    searchFoundCount: null,
+                },
+                catalog: {
+                    searchQuery: '',
+                    searchFocusIndex: 0,
+                    searchFoundCount: null,
+                },
+            },
         };
         this.db = null;
     }
 
     // eslint-disable-next-line react/sort-comp
-    initFirbaseDB = (callback = () => {}) => {
-        const email = '';
-        const password = '';
+    initFirbaseDB = (callback = () => {
+    }) => {
         firebase.initializeApp(FirebaseConfig);
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
+                // eslint-disable-next-line react/destructuring-assignment
+                if (this.state.needAuth) {
+                    this.setState({ needAuth: false });
+                }
                 // console.log(user);
                 // const userId = firebase.auth().currentUser.uid;
                 this.db = firebase.firestore();
@@ -66,12 +92,13 @@ class Rms extends React.Component {
                 });
                 callback();
             } else {
-                firebase.auth().signInWithEmailAndPassword(email, password).catch((error) => {
-                    // Handle Errors here.
-                    // eslint-disable-next-line no-console
-                    console.log(error);
-                    // ...
-                });
+                this.setState({ needAuth: true });
+                // firebase.auth().signInWithEmailAndPassword(email, password).catch((error) => {
+                //     // Handle Errors here.
+                //     // eslint-disable-next-line no-console
+                //     console.log(error);
+                //     // ...
+                // });
             }
         });
     };
@@ -151,35 +178,25 @@ class Rms extends React.Component {
                 id,
             };
             this.updateComponents(updatedData, true);
-            this.setState({
-                draftData: true,
-            });
+            EE.emit('beforeRequest');
             this.db.collection('components').doc(id).set({
                 ...component,
             }).then(() => {
-                this.setState({
-                    draftData: false,
-                });
+                EE.emit('afterRequest');
             });
         } else {
-            this.setState({
-                draftData: true,
-            });
+            EE.emit('beforeRequest');
             this.db.collection('components').add({
                 ...component,
             }).then((ref) => {
-                this.setState({
-                    draftData: false,
-                });
+                EE.emit('afterRequest');
                 updatedData.push({
                     ...component,
                     id: ref.id,
                 });
                 this.updateComponents(updatedData, true);
                 if (parentId !== null) {
-                    this.setState({
-                        draftData: true,
-                    });
+                    EE.emit('beforeRequest');
                     const node = TreeHelper.searchTree({
                         componentId: 'root',
                         children: updatedCatalog,
@@ -188,9 +205,7 @@ class Rms extends React.Component {
                         componentId: ref.id,
                         parentId,
                     }).then(() => {
-                        this.setState({
-                            draftData: false,
-                        });
+                        EE.emit('afterRequest');
                     });
                     node.children.push({
                         componentId: ref.id,
@@ -208,9 +223,9 @@ class Rms extends React.Component {
         if (idx !== -1) {
             updatedData.splice(idx, 1);
             this.updateComponents(updatedData, true);
-            this.setState({ draftData: true });
+            EE.emit('beforeRequest');
             this.db.collection('components').doc(id).delete().then(() => {
-                this.setState({ draftData: false });
+                EE.emit('afterRequest');
             });
         }
     };
@@ -228,13 +243,11 @@ class Rms extends React.Component {
 
     updateComponents = (
         data,
-        dirty = false,
     ) => {
         this.setState({
             editingComponent: null,
             parentId: null,
             data,
-            draftData: !dirty,
         });
     };
 
@@ -244,8 +257,10 @@ class Rms extends React.Component {
         const oldCollection = oldDraftCollection.filter(i => i.componentId !== 'backlog');
         this.setState({
             [collection]: draftData,
-            draftData: !dirty,
         });
+        if (!dirty) {
+            EE.emit('beforeRequest');
+        }
         if (!dirty) {
             const flatData = TreeHelper.treeToFlat(data);
             const oldFlatData = TreeHelper.treeToFlat(oldCollection);
@@ -269,13 +284,13 @@ class Rms extends React.Component {
                 }
             });
             batch.commit().then(() => {
-                this.setState({ draftData: false });
+                EE.emit('afterRequest');
 
                 if (flatData.length > oldFlatData.length) {
                     flatData.forEach((item) => {
                         const oldItem = oldFlatData.find(i => i.rid === item.rid);
                         if (oldItem === undefined) {
-                            this.setState({ draftData: true });
+                            EE.emit('beforeRequest');
                             this.db.collection(collection).add({
                                 parentId: item.parentId,
                                 componentId: item.componentId,
@@ -296,8 +311,8 @@ class Rms extends React.Component {
                                             return info.node;
                                         },
                                     }),
-                                    draftData: false,
                                 };
+                                EE.emit('afterRequest');
                                 this.setState(nextState);
                                 // Did i ever tell you the definition of "Insanity"??
                                 // this.getStructure(collection);
@@ -335,23 +350,139 @@ class Rms extends React.Component {
         this.updateStructure(collection, toggleExpandedForAll({ treeData: data, expanded }));
     };
 
+    handleLogin = (email, password) => {
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then(() => {
+                // this.setState({ needAuth: true });
+            })
+            .catch((error) => {
+                // Handle Errors here.
+                // eslint-disable-next-line no-console
+                console.log(error);
+                // ...
+            });
+    };
+
+    selectPrevMatch = (collection) => {
+        const {
+            searches: {
+                [collection]: {
+                    searchFocusIndex,
+                    searchFoundCount,
+                },
+            },
+            searches,
+            searches: {
+                [collection]: searchData,
+            },
+        } = this.state;
+        const newSearchFocusIndex = searchFocusIndex !== null
+            ? (searchFoundCount + searchFocusIndex - 1) % searchFoundCount
+            : searchFoundCount - 1;
+        this.setState({
+            searches: {
+                ...searches,
+                [collection]: {
+                    ...searchData,
+                    searchFocusIndex: newSearchFocusIndex,
+                },
+            },
+        });
+    };
+
+    selectNextMatch = (collection) => {
+        const {
+            searches: {
+                [collection]: {
+                    searchFocusIndex,
+                    searchFoundCount,
+                },
+            },
+            searches,
+            searches: {
+                [collection]: searchData,
+            },
+        } = this.state;
+        const newSearchFocusIndex = searchFocusIndex !== null
+            ? (searchFocusIndex + 1) % searchFoundCount
+            : 0;
+        this.setState({
+            searches: {
+                ...searches,
+                [collection]: {
+                    ...searchData,
+                    searchFocusIndex: newSearchFocusIndex,
+                },
+            },
+        });
+    };
+
+    searchFinishCallback = (collection, matches) => {
+        const {
+            searches: {
+                [collection]: {
+                    searchFocusIndex,
+                },
+            },
+            searches,
+            searches: {
+                [collection]: searchData,
+            },
+        } = this.state;
+        const searchFoundCount = matches.length;
+        this.setState({
+            searches: {
+                ...searches,
+                [collection]: {
+                    ...searchData,
+                    searchFocusIndex: matches.length > 0 ? searchFocusIndex % matches.length : 0,
+                    searchFoundCount,
+                },
+            },
+        });
+    };
+
+    updateSearchQuery = (collection, q) => {
+        const {
+            searches,
+            searches: {
+                [collection]: searchData,
+            },
+        } = this.state;
+        this.setState({
+            searches: {
+                ...searches,
+                [collection]: {
+                    ...searchData,
+                    searchQuery: q,
+                },
+            },
+        });
+    };
+
+    customSearchMethod = ({ node, searchQuery }) => {
+        return searchQuery
+            && node.name.toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
+    };
+
     render() {
         // eslint-disable-next-line react/prop-types
         const { classes } = this.props;
         const {
+            needAuth,
             data,
             relations,
             catalog,
-            draftData,
             editingComponent,
+            searches: {
+                relations: relationsSearch,
+                catalog: catalogSearch,
+            },
         } = this.state;
-        if (data !== null) {
-            return (
-                <div className={classes.root}>
-                    <h1>
-                        RMS
-                        {draftData && <SaveIcon style={{ color: 'red' }} />}
-                    </h1>
+        return (
+            <div className={classes.root}>
+                <Header EE={EE} />
+                {data !== null && (
                     <Grid
                         container
                         alignItems="stretch"
@@ -363,13 +494,22 @@ class Rms extends React.Component {
                                 {relations !== null && (
                                     <React.Fragment>
                                         <Toolbar
-                                            expandAll={() => this.handleToggleExpandedForAll('relations', true)}
-                                            expandNone={() => this.handleToggleExpandedForAll('relations', false)}
+                                            type="relations"
+                                            expandToggle={this.handleToggleExpandedForAll}
+                                            updateSearchQuery={this.updateSearchQuery}
+                                            selectNextMatch={this.selectNextMatch}
+                                            selectPrevMatch={this.selectPrevMatch}
+                                            searchFocusIndex={relationsSearch.searchFocusIndex}
+                                            searchFoundCount={relationsSearch.searchFoundCount}
                                         />
                                         <Folders
                                             data={data}
                                             relations={relations}
+                                            searchFocusIndex={relationsSearch.searchFocusIndex}
+                                            searchQuery={relationsSearch.searchQuery}
+                                            searchMethod={this.customSearchMethod}
                                             updateRelations={this.updateRelations}
+                                            searchFinishCallback={this.searchFinishCallback}
                                         />
                                     </React.Fragment>
                                 )}
@@ -380,32 +520,44 @@ class Rms extends React.Component {
                                 {catalog !== null && (
                                     <React.Fragment>
                                         <Toolbar
-                                            expandAll={() => this.handleToggleExpandedForAll('catalog', true)}
-                                            expandNone={() => this.handleToggleExpandedForAll('catalog', false)}
+                                            type="catalog"
+                                            expandToggle={this.handleToggleExpandedForAll}
+                                            updateSearchQuery={this.updateSearchQuery}
+                                            selectNextMatch={this.selectNextMatch}
+                                            selectPrevMatch={this.selectPrevMatch}
+                                            searchFocusIndex={catalogSearch.searchFocusIndex}
+                                            searchFoundCount={catalogSearch.searchFoundCount}
                                         />
                                         <Catalog
                                             data={data}
                                             catalog={catalog}
+                                            searchFocusIndex={catalogSearch.searchFocusIndex}
+                                            searchQuery={catalogSearch.searchQuery}
+                                            searchMethod={this.customSearchMethod}
                                             updateCatalog={this.updateCatalog}
                                             showEditor={this.showEditor}
                                             removeComponent={this.removeComponent}
+                                            searchFinishCallback={this.searchFinishCallback}
                                         />
                                     </React.Fragment>
                                 )}
                             </Paper>
                         </Grid>
                     </Grid>
-                    <ComponentEdit
-                        handleComponentSave={this.handleComponentSave}
-                        hideEditor={this.hideEditor}
-                        component={editingComponent}
-                        show={editingComponent !== null}
-                        components={data}
-                    />
-                </div>
-            );
-        }
-        return null;
+                )}
+                <AuthDialog
+                    handleLogin={this.handleLogin}
+                    show={needAuth}
+                />
+                <ComponentEdit
+                    handleComponentSave={this.handleComponentSave}
+                    hideEditor={this.hideEditor}
+                    component={editingComponent}
+                    show={editingComponent !== null}
+                    components={data || []}
+                />
+            </div>
+        );
     }
 }
 

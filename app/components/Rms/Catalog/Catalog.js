@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import SortableTree, { removeNodeAtPath, getNodeAtPath } from 'react-sortable-tree';
 import 'react-sortable-tree/style.css';
+import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
@@ -29,7 +30,7 @@ function Title(props) {
     );
 }
 
-class Catalog extends Component {
+class Catalog extends React.PureComponent {
     treeHelper = new TreeHelper(Title, 'catalog', true);
 
     updateTree = (treeData) => {
@@ -78,14 +79,36 @@ class Catalog extends Component {
         return true;
     };
 
+    searchFinishCallback = (matches) => {
+        const { searchFinishCallback } = this.props;
+        searchFinishCallback('catalog', matches);
+    };
+
     render() {
-        const { data, catalog, showEditor } = this.props;
+        const {
+            data,
+            catalog,
+            showEditor,
+            searchFocusIndex,
+            searchQuery,
+            searchMethod,
+        } = this.props;
         return (
-            <div>
-                <IconButton aria-label="Add" onClick={() => showEditor()}>
+            <div
+                style={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                }}
+            >
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => showEditor()}
+                >
                     <AddIcon />
-                </IconButton>
-                <div style={{ height: '80vh' }}>
+                </Button>
+                <div style={{ height: '100%' }}>
                     <SortableTree
                         treeData={this.treeHelper.listToTree(data, catalog, true)}
                         onChange={this.updateTree}
@@ -116,6 +139,10 @@ class Catalog extends Component {
                             }
                             return { buttons };
                         }}
+                        searchFocusOffset={searchFocusIndex}
+                        searchQuery={searchQuery}
+                        searchMethod={searchMethod}
+                        searchFinishCallback={this.searchFinishCallback}
                     />
                 </div>
             </div>
@@ -131,6 +158,10 @@ Catalog.propTypes = {
     updateCatalog: PropTypes.func.isRequired,
     showEditor: PropTypes.func.isRequired,
     removeComponent: PropTypes.func.isRequired,
+    searchMethod: PropTypes.func.isRequired,
+    searchFinishCallback: PropTypes.func.isRequired,
+    searchQuery: PropTypes.string.isRequired,
+    searchFocusIndex: PropTypes.number.isRequired,
 };
 
 export default Catalog;

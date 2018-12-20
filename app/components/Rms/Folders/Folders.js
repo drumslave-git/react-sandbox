@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import SortableTree, { removeNodeAtPath } from 'react-sortable-tree';
 import 'react-sortable-tree/style.css';
@@ -27,8 +27,23 @@ function Title(props) {
     );
 }
 
-class Folders extends Component {
+class Folders extends React.PureComponent {
     treeHelper = new TreeHelper(Title, 'relations');
+
+    // componentDidUpdate(prevProps, prevState) {
+    //     if (this.props) {
+    //         Object
+    //             .entries(this.props)
+    //             .forEach(([key, val]) => prevProps[key] !== val
+    //                 && console.log(`Prop '${key}' changed`));
+    //     }
+    //     if (this.state) {
+    //         Object
+    //             .entries(this.state)
+    //             .forEach(([key, val]) => prevState[key] !== val
+    //                 && console.log(`State '${key}' changed`));
+    //     }
+    // }
 
     updateTree = (treeData) => {
         const { updateRelations, data = [] } = this.props;
@@ -47,10 +62,21 @@ class Folders extends Component {
         }));
     };
 
+    searchFinishCallback = (matches) => {
+        const { searchFinishCallback } = this.props;
+        searchFinishCallback('relations', matches);
+    };
+
     render() {
-        const { data, relations } = this.props;
+        const {
+            data,
+            relations,
+            searchFocusIndex,
+            searchQuery,
+            searchMethod,
+        } = this.props;
         return (
-            <div style={{ height: '80vh' }}>
+            <div style={{ height: '100%' }}>
                 <SortableTree
                     treeData={this.treeHelper.listToTree(data, relations)}
                     onChange={this.updateTree}
@@ -62,6 +88,10 @@ class Folders extends Component {
                             </IconButton>,
                         ],
                     })}
+                    searchFocusOffset={searchFocusIndex}
+                    searchQuery={searchQuery}
+                    searchMethod={searchMethod}
+                    searchFinishCallback={this.searchFinishCallback}
                 />
             </div>
         );
@@ -74,6 +104,10 @@ Folders.propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     relations: PropTypes.array.isRequired,
     updateRelations: PropTypes.func.isRequired,
+    searchMethod: PropTypes.func.isRequired,
+    searchFinishCallback: PropTypes.func.isRequired,
+    searchQuery: PropTypes.string.isRequired,
+    searchFocusIndex: PropTypes.number.isRequired,
 };
 
 export default Folders;
