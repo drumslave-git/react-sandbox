@@ -5,25 +5,15 @@ import echarts from 'echarts';
 class Charts extends React.Component {
     chartDom = null;
 
+    state = {
+        drawChart: false,
+        activeItem: 'group name: 1',
+    };
+
     componentDidMount() {
         if (this.chartDom) {
             const inst = echarts.init(this.chartDom, null);
 
-            // const option = {
-            //     xAxis: {
-            //         data: ['testX'],
-            //     },
-            //     yAxis: {
-            //         data: ['testY'],
-            //         showMinLabel: true,
-            //     },
-            //     series: [{
-            //         // barMinHeight: 50,
-            //         type: 'bar',
-            //         data: [[0, 0]],
-            //
-            //     }],
-            // };
             const option = {
                 color: ['#dd6b66', '#759aa0', '#e69d87', '#8dc1a9', '#ea7e53', '#eedd78', '#73a373', '#73b9bc', '#7289ab', '#91ca8c', '#f49f42'],
                 backgroundColor: '#333',
@@ -169,13 +159,164 @@ class Charts extends React.Component {
         }
     }
 
+    sidebarItems = (count = 50, name = 'group name') => {
+        const items = [];
+        for (let i = 0; i < count; i += 1) {
+            items.push(`${name}: ${i + 1}`);
+        }
+        return items;
+    };
+
     render() {
+        const { drawChart, activeItem } = this.state;
+        if (drawChart) {
+            return (
+                <div
+                    ref={r => this.chartDom = r}
+                    style={{
+                        width: '100vw',
+                        height: '100vh',
+                    }}
+                >
+                    Charts
+                </div>
+            );
+        }
+        const sidebarItems = this.sidebarItems();
+        const headings = this.sidebarItems(20, 'heading');
+        const rows = this.sidebarItems(100, 'cell content');
         return (
             <div
-                ref={r => this.chartDom = r}
-                style={{ width: 600, height: 35000 }}
+                style={{
+                    width: '100vw',
+                    height: '100vh',
+                }}
             >
-                Charts
+                <div
+                    style={{
+                        width: '60vw',
+                        height: '50vh',
+                        position: 'absolute',
+                        left: '50%',
+                        top: '50%',
+                        transform: `translate(-${50}%, -${50}%)`,
+                        background: '#a4a4a4',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        padding: '20px',
+                        // boxSizing: 'border-box',
+                    }}
+                >
+                    <div
+                        style={{
+                            padding: '20px',
+                            boxSizing: 'border-box',
+                        }}
+                    >
+                        FULL DATA POPUP DEMO
+                    </div>
+                    <div style={{
+                        display: 'flex',
+                    }}
+                    >
+                        <div style={{
+                            width: '30%',
+                            background: '#cbcbcb',
+                            overflow: 'auto',
+                        }}
+                        >
+                            <ul
+                                style={{
+                                    listStyle: 'none',
+                                    margin: 0,
+                                    padding: 0,
+                                }}
+                            >
+                                {sidebarItems.map(item => (
+                                    <li
+                                        key={item}
+                                    >
+                                        <button
+                                            type="button"
+                                            style={{
+                                                background: (item === activeItem) ? '#989898' : '#e3e3e3',
+                                                margin: '5px',
+                                                padding: '5px',
+                                                cursor: 'pointer',
+                                                border: 'none',
+                                                boxSizing: 'border-box',
+                                                textAlign: 'left',
+                                                width: 'calc(100% - 10px)',
+                                            }}
+                                            onClick={() => {
+                                                this.setState({
+                                                    activeItem: item,
+                                                });
+                                            }}
+                                        >
+                                            {item}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div style={{
+                            background: '#e2e2e2',
+                            overflow: 'auto',
+                            flex: 1,
+                        }}
+                        >
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    position: 'sticky',
+                                    top: 0,
+                                }}
+                            >
+                                {headings.map(head => (
+                                    <div
+                                        key={head}
+                                        style={{
+                                            width: 200,
+                                            padding: '5px',
+                                            flex: '1 0 200px',
+                                            background: '#191919',
+                                            color: '#fff',
+                                            marginRight: '3px',
+                                        }}
+                                    >
+                                        {activeItem} {head}
+                                    </div>
+                                ))}
+                            </div>
+                            <div>
+                                {rows.map((row, idx) => (
+                                    <div
+                                        key={row}
+                                        style={{
+                                            display: 'flex',
+                                        }}
+                                    >
+                                        {headings.map((head, hidx) => (
+                                            <div
+                                                key={`${row}=${head}`}
+                                                style={{
+                                                    width: 200,
+                                                    padding: '5px',
+                                                    flex: '1 0 200px',
+                                                    background: (idx % 2 === 0) ? '#cbcbcb' : '#b4b4b4',
+                                                    marginRight: '3px',
+                                                }}
+                                            >
+                                                {activeItem} {row} {hidx}
+                                            </div>
+                                        ))}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
