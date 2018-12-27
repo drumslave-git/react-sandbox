@@ -11,6 +11,10 @@ app.use('/api', (req, res) => {
     req.pipe(request(`https://redmine.enaikoon.de${req.url}`)).pipe(res);
 });
 
+app.use('/rms/api', (req, res) => {
+    req.pipe(request(`https://drumslave-rms-api.herokuapp.com/api/v1${req.url}`)).pipe(res);
+});
+
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });

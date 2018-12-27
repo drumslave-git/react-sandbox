@@ -42,6 +42,12 @@ const config = {
                 pathRewrite: { '^/api': '' },
                 secure: false,
             },
+            '/rms/api': {
+                target: 'https://drumslave-rms-api.herokuapp.com/api/v1',
+                changeOrigin: true,
+                pathRewrite: { '^/rms/api': '' },
+                secure: false,
+            },
         },
     },
 

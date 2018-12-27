@@ -1,5 +1,6 @@
 import React from 'react';
 // import uuid from 'uuid';
+import axios from 'axios';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
@@ -108,18 +109,16 @@ class Rms extends React.Component {
     }
 
     getData = () => {
-        this.db.collection('components').get().then((querySnapshot) => {
-            const data = [];
-            querySnapshot.forEach((doc) => {
-                const { id } = doc;
-                const { name, color } = doc.data();
-                data.push({
-                    id,
-                    name,
-                    color,
-                });
-            });
-            this.setState({ data });
+        EE.emit('beforeRequest');
+        axios.get('/rms/api/components').then(({ data: { rows = [] }, status }) => {
+            EE.emit('afterRequest');
+            if (status === 200) {
+                this.setState({ data: rows });
+            }
+        }).catch((error) => {
+            EE.emit('afterRequest');
+            // eslint-disable-next-line no-console
+            console.log(error);
         });
     };
 
@@ -168,7 +167,11 @@ class Rms extends React.Component {
     };
 
     handleComponentSave = (component, id = null) => {
-        const { data, catalog, parentId } = this.state;
+        const {
+            data,
+            catalog,
+            parentId,
+        } = this.state;
         const updatedData = [...data];
         const updatedCatalog = [...catalog];
         if (id !== null) {
@@ -179,40 +182,51 @@ class Rms extends React.Component {
             };
             this.updateComponents(updatedData, true);
             EE.emit('beforeRequest');
-            this.db.collection('components').doc(id).set({
-                ...component,
-            }).then(() => {
+            axios.put(`/rms/api/components/${id}`, component).then(() => {
                 EE.emit('afterRequest');
             });
         } else {
             EE.emit('beforeRequest');
-            this.db.collection('components').add({
-                ...component,
-            }).then((ref) => {
+            axios.post('/rms/api/components', component).then(({ data: { rows = [] }, status }) => {
                 EE.emit('afterRequest');
-                updatedData.push({
-                    ...component,
-                    id: ref.id,
-                });
-                this.updateComponents(updatedData, true);
-                if (parentId !== null) {
-                    EE.emit('beforeRequest');
-                    const node = TreeHelper.searchTree({
-                        componentId: 'root',
-                        children: updatedCatalog,
-                    }, parentId);
-                    this.db.collection('catalog').add({
-                        componentId: ref.id,
-                        parentId,
-                    }).then(() => {
-                        EE.emit('afterRequest');
-                    });
-                    node.children.push({
-                        componentId: ref.id,
-                    });
-                    this.updateCatalog(updatedCatalog, true);
+                if (status === 200 && rows[0]) {
+                    const ref = rows[0];
+                    updatedData.push(ref);
+                    this.updateComponents(updatedData, true);
+                    if (parentId !== null) {
+                        EE.emit('beforeRequest');
+                        const node = TreeHelper.searchTree({
+                            componentId: 'root',
+                            children: updatedCatalog,
+                        }, parentId);
+                        this.db.collection('catalog').add({
+                            componentId: ref.id,
+                            parentId,
+                        }).then(() => {
+                            EE.emit('afterRequest');
+                        });
+                        node.children.push({
+                            componentId: ref.id,
+                        });
+                        this.updateCatalog(updatedCatalog, true);
+                    }
                 }
+            }).catch((error) => {
+                EE.emit('afterRequest');
+                // eslint-disable-next-line no-console
+                console.log(error);
             });
+            // EE.emit('beforeRequest');
+            // this.db.collection('components').add({
+            //     ...component,
+            // }).then((ref) => {
+            //     EE.emit('afterRequest');
+            //     updatedData.push({
+            //         ...component,
+            //         id: ref.id,
+            //     });
+            //     this.updateComponents(updatedData, true);
+            // });
         }
     };
 
@@ -224,7 +238,7 @@ class Rms extends React.Component {
             updatedData.splice(idx, 1);
             this.updateComponents(updatedData, true);
             EE.emit('beforeRequest');
-            this.db.collection('components').doc(id).delete().then(() => {
+            axios.delete(`/rms/api/components/${id}`).then(() => {
                 EE.emit('afterRequest');
             });
         }
@@ -302,7 +316,11 @@ class Rms extends React.Component {
                                         treeData: draftData,
                                         getNodeKey: node => node.rid,
                                         callback: (info) => {
-                                            if (info.node.rid === undefined && info.node.componentId !== 'backlog') {
+                                            if (
+                                                info.node.rid === undefined
+                                                && info.node.componentId !== 'backlog'
+                                                && (!info.parentNode || info.parentNode.componentId !== 'backlog')
+                                            ) {
                                                 return {
                                                     ...info.node,
                                                     rid: ref.id,
