@@ -111,6 +111,7 @@ class Toolbar extends React.PureComponent {
 
 Toolbar.defaultProps = {
     searchFoundCount: null,
+    searchFocusIndex: null,
 };
 
 Toolbar.propTypes = {
@@ -118,7 +119,7 @@ Toolbar.propTypes = {
     selectPrevMatch: PropTypes.func.isRequired,
     selectNextMatch: PropTypes.func.isRequired,
     updateSearchQuery: PropTypes.func.isRequired,
-    searchFocusIndex: PropTypes.number.isRequired,
+    searchFocusIndex: PropTypes.number,
     type: PropTypes.string.isRequired,
     searchFoundCount: PropTypes.number,
 };

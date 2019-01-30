@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SortableTree, { removeNodeAtPath, getNodeAtPath } from 'react-sortable-tree';
+import SortableTree, { removeNodeAtPath, map as mapTree, getNodeAtPath } from 'react-sortable-tree';
 import 'react-sortable-tree/style.css';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -34,39 +34,33 @@ class Catalog extends React.PureComponent {
     treeHelper = new TreeHelper(Title, 'catalog', true);
 
     updateTree = (treeData) => {
-        const { updateCatalog, data = [] } = this.props;
-        updateCatalog(this.treeHelper.treeToRelations(data, treeData));
+        const { updateCatalog } = this.props;
+        updateCatalog(treeData);
     };
 
     removeTreeNode = (info) => {
-        const { data, catalog, removeComponent } = this.props;
-        const { path, node, parentNode } = info;
-        if (parentNode !== null && parentNode.id === 'backlog') {
-            removeComponent(node.id);
-        } else {
-            this.updateTree(removeNodeAtPath({
-                treeData: this.treeHelper.listToTree(data, catalog, true),
-                path,
-                getNodeKey: ({ treeIndex: number }) => {
-                    return number;
-                },
-            }));
-        }
+        const { catalog, removeComponent } = this.props;
+        const { path, node } = info;
+        this.updateTree(removeNodeAtPath({
+            treeData: catalog,
+            path,
+            getNodeKey: ({ treeIndex: number }) => {
+                return number;
+            },
+        }));
+        removeComponent(node.id);
     };
 
     showEditor = (info) => {
-        const { data, showEditor } = this.props;
-        const component = data.find(comp => comp.id === info.node.id);
-        if (component !== undefined) {
-            showEditor(component);
-        }
+        const { showEditor } = this.props;
+        showEditor(info);
     };
 
     isBacklogSectionTarget = (info) => {
         const { nextPath } = info;
-        const { data, catalog } = this.props;
+        const { catalog } = this.props;
         const res = getNodeAtPath({
-            treeData: this.treeHelper.listToTree(data, catalog, true),
+            treeData: catalog,
             path: nextPath.slice(0, 1),
             getNodeKey: ({ treeIndex: number }) => {
                 return number;
@@ -86,7 +80,6 @@ class Catalog extends React.PureComponent {
 
     render() {
         const {
-            data,
             catalog,
             showEditor,
             searchFocusIndex,
@@ -110,7 +103,17 @@ class Catalog extends React.PureComponent {
                 </Button>
                 <div style={{ height: '100%' }}>
                     <SortableTree
-                        treeData={this.treeHelper.listToTree(data, catalog, true)}
+                        treeData={mapTree({
+                            treeData: catalog,
+                            getNodeKey: node => node.id,
+                            callback: (info) => {
+                                return {
+                                    ...info.node,
+                                    title: Title(info.node),
+                                    type: 'catalog',
+                                };
+                            },
+                        })}
                         onChange={this.updateTree}
                         dndType="component"
                         shouldCopyOnOutsideDrop
@@ -150,9 +153,12 @@ class Catalog extends React.PureComponent {
     }
 }
 
+Catalog.defaultProps = {
+    searchQuery: null,
+    searchFocusIndex: null,
+}
+
 Catalog.propTypes = {
-    // eslint-disable-next-line react/forbid-prop-types
-    data: PropTypes.array.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     catalog: PropTypes.array.isRequired,
     updateCatalog: PropTypes.func.isRequired,
@@ -160,8 +166,8 @@ Catalog.propTypes = {
     removeComponent: PropTypes.func.isRequired,
     searchMethod: PropTypes.func.isRequired,
     searchFinishCallback: PropTypes.func.isRequired,
-    searchQuery: PropTypes.string.isRequired,
-    searchFocusIndex: PropTypes.number.isRequired,
+    searchQuery: PropTypes.string,
+    searchFocusIndex: PropTypes.number,
 };
 
 export default Catalog;

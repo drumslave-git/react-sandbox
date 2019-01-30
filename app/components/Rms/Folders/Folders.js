@@ -98,6 +98,11 @@ class Folders extends React.PureComponent {
     }
 }
 
+Folders.defaultProps = {
+    searchQuery: null,
+    searchFocusIndex: null,
+};
+
 Folders.propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     data: PropTypes.array.isRequired,
@@ -106,8 +111,8 @@ Folders.propTypes = {
     updateRelations: PropTypes.func.isRequired,
     searchMethod: PropTypes.func.isRequired,
     searchFinishCallback: PropTypes.func.isRequired,
-    searchQuery: PropTypes.string.isRequired,
-    searchFocusIndex: PropTypes.number.isRequired,
+    searchQuery: PropTypes.string,
+    searchFocusIndex: PropTypes.number,
 };
 
 export default Folders;

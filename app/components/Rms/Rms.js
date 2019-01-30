@@ -61,13 +61,13 @@ class Rms extends React.Component {
             needAuth: false,
             searches: {
                 relations: {
-                    searchQuery: '',
-                    searchFocusIndex: 0,
+                    searchQuery: null,
+                    searchFocusIndex: null,
                     searchFoundCount: null,
                 },
                 catalog: {
-                    searchQuery: '',
-                    searchFocusIndex: 0,
+                    searchQuery: null,
+                    searchFocusIndex: null,
                     searchFoundCount: null,
                 },
             },
@@ -123,33 +123,48 @@ class Rms extends React.Component {
     };
 
     getStructure = (collection) => {
-        this.db.collection(collection).get().then((querySnapshot) => {
-            const res = [];
-            querySnapshot.forEach((doc) => {
-                const { id } = doc;
-                const {
-                    componentId,
-                    parentId,
-                    expanded = false,
-                    order = 0,
-                } = doc.data();
-                res.push({
-                    rid: id,
-                    parentId,
-                    componentId,
-                    expanded,
-                    order,
+        if (collection === 'catalog') {
+            axios.get('/rms/api/tree').then(({ data, status }) => {
+                console.log(status, data);
+                if (status === 200) {
+                    this.setState({
+                        [collection]: data,
+                    });
+                }
+            }).catch((error) => {
+                EE.emit('afterRequest');
+                // eslint-disable-next-line no-console
+                console.log(error);
+            });
+        } else {
+            this.db.collection(collection).get().then((querySnapshot) => {
+                const res = [];
+                querySnapshot.forEach((doc) => {
+                    const { id } = doc;
+                    const {
+                        componentId,
+                        parentId,
+                        expanded = false,
+                        order = 0,
+                    } = doc.data();
+                    res.push({
+                        rid: id,
+                        parentId,
+                        componentId,
+                        expanded,
+                        order,
+                    });
+                });
+                res.sort((a, b) => a.order - b.order);
+                this.setState({
+                    [collection]: getTreeFromFlatData({
+                        flatData: res,
+                        getKey: node => node.rid,
+                        rootKey: '',
+                    }),
                 });
             });
-            res.sort((a, b) => a.order - b.order);
-            this.setState({
-                [collection]: getTreeFromFlatData({
-                    flatData: res,
-                    getKey: node => node.rid,
-                    rootKey: '',
-                }),
-            });
-        });
+        }
     };
 
     getRelations = () => {
@@ -244,17 +259,6 @@ class Rms extends React.Component {
         }
     };
 
-    // addToRelations = (component) => {
-    //     const { relations } = this.state;
-    //     const updatedRelations = [...relations];
-    //
-    //     updatedRelations.unshift({
-    //         componentId: component.id,
-    //         children: [],
-    //     });
-    //     this.updateRelations(updatedRelations);
-    // };
-
     updateComponents = (
         data,
     ) => {
@@ -266,79 +270,106 @@ class Rms extends React.Component {
     };
 
     updateStructure = (collection, draftData, dirty = false) => {
-        const { [collection]: oldDraftCollection } = this.state;
-        const data = draftData.filter(i => i.componentId !== 'backlog');
-        const oldCollection = oldDraftCollection.filter(i => i.componentId !== 'backlog');
-        this.setState({
-            [collection]: draftData,
-        });
-        if (!dirty) {
-            EE.emit('beforeRequest');
-        }
-        if (!dirty) {
-            const flatData = TreeHelper.treeToFlat(data);
-            const oldFlatData = TreeHelper.treeToFlat(oldCollection);
-            const batch = this.db.batch();
-            oldFlatData.forEach((oldItem) => {
-                const item = flatData.find(i => i.rid === oldItem.rid);
-                if (oldItem.rid === undefined) {
-                    // data is not yet saved, but... it's ok
-                    return;
-                }
-                const ref = this.db.collection(collection).doc(oldItem.rid);
-                if (item === undefined) {
-                    batch.delete(ref);
-                } else {
-                    batch.set(ref, {
-                        parentId: item.parentId,
-                        componentId: item.componentId,
-                        expanded: item.expanded,
-                        order: item.order,
-                    });
-                }
+        if (collection === 'catalog') {
+            const data = mapTree({
+                treeData: draftData,
+                getNodeKey: node => node.rid,
+                callback: (info) => {
+                    return {
+                        id: info.node.id,
+                        parentid: info.node.parentid,
+                        expanded: info.node.expanded,
+                        componentid: info.node.componentid,
+                        children: info.node.children,
+                    };
+                },
             });
-            batch.commit().then(() => {
-                EE.emit('afterRequest');
+            axios.post('/rms/api/tree', data)
+                .then(() => {
+                    this.setState({
+                        [collection]: draftData,
+                    });
+                })
+                .catch((error) => {
+                    EE.emit('afterRequest');
+                    // eslint-disable-next-line no-console
+                    console.log(error);
+                });
+        } else {
+            const { [collection]: oldDraftCollection } = this.state;
+            const data = draftData.filter(i => i.componentId !== 'backlog');
+            const oldCollection = oldDraftCollection.filter(i => i.componentId !== 'backlog');
+            this.setState({
+                [collection]: draftData,
+            });
+            if (!dirty) {
+                EE.emit('beforeRequest');
+            }
+            if (!dirty) {
+                const flatData = TreeHelper.treeToFlat(data);
+                const oldFlatData = TreeHelper.treeToFlat(oldCollection);
+                const batch = this.db.batch();
+                oldFlatData.forEach((oldItem) => {
+                    const item = flatData.find(i => i.rid === oldItem.rid);
+                    if (oldItem.rid === undefined) {
+                        // data is not yet saved, but... it's ok
+                        return;
+                    }
+                    const ref = this.db.collection(collection).doc(oldItem.rid);
+                    if (item === undefined) {
+                        batch.delete(ref);
+                    } else {
+                        batch.set(ref, {
+                            parentId: item.parentId,
+                            componentId: item.componentId,
+                            expanded: item.expanded,
+                            order: item.order,
+                        });
+                    }
+                });
+                batch.commit().then(() => {
+                    EE.emit('afterRequest');
 
-                if (flatData.length > oldFlatData.length) {
-                    flatData.forEach((item) => {
-                        const oldItem = oldFlatData.find(i => i.rid === item.rid);
-                        if (oldItem === undefined) {
-                            EE.emit('beforeRequest');
-                            this.db.collection(collection).add({
-                                parentId: item.parentId,
-                                componentId: item.componentId,
-                                expanded: item.expanded,
-                                order: item.order,
-                            }).then((ref) => {
-                                const nextState = {
-                                    [collection]: mapTree({
-                                        treeData: draftData,
-                                        getNodeKey: node => node.rid,
-                                        callback: (info) => {
-                                            if (
-                                                info.node.rid === undefined
-                                                && info.node.componentId !== 'backlog'
-                                                && (!info.parentNode || info.parentNode.componentId !== 'backlog')
-                                            ) {
-                                                return {
-                                                    ...info.node,
-                                                    rid: ref.id,
-                                                };
-                                            }
-                                            return info.node;
-                                        },
-                                    }),
-                                };
-                                EE.emit('afterRequest');
-                                this.setState(nextState);
-                                // Did i ever tell you the definition of "Insanity"??
-                                // this.getStructure(collection);
-                            });
-                        }
-                    });
-                }
-            });
+                    if (flatData.length > oldFlatData.length) {
+                        flatData.forEach((item) => {
+                            const oldItem = oldFlatData.find(i => i.rid === item.rid);
+                            if (oldItem === undefined) {
+                                EE.emit('beforeRequest');
+                                this.db.collection(collection).add({
+                                    parentId: item.parentId,
+                                    componentId: item.componentId,
+                                    expanded: item.expanded,
+                                    order: item.order,
+                                }).then((ref) => {
+                                    const nextState = {
+                                        [collection]: mapTree({
+                                            treeData: draftData,
+                                            getNodeKey: node => node.rid,
+                                            callback: (info) => {
+                                                if (
+                                                    info.node.rid === undefined
+                                                    && info.node.componentId !== 'backlog'
+                                                    && (!info.parentNode || info.parentNode.componentId !== 'backlog')
+                                                ) {
+                                                    return {
+                                                        ...info.node,
+                                                        rid: ref.id,
+                                                    };
+                                                }
+                                                return info.node;
+                                            },
+                                        }),
+                                    };
+                                    EE.emit('afterRequest');
+                                    this.setState(nextState);
+                                    // Did i ever tell you the definition of "Insanity"??
+                                    // this.getStructure(collection);
+                                });
+                            }
+                        });
+                    }
+                });
+            }
         }
     };
 
@@ -546,17 +577,18 @@ class Rms extends React.Component {
                                             searchFocusIndex={catalogSearch.searchFocusIndex}
                                             searchFoundCount={catalogSearch.searchFoundCount}
                                         />
-                                        <Catalog
-                                            data={data}
-                                            catalog={catalog}
-                                            searchFocusIndex={catalogSearch.searchFocusIndex}
-                                            searchQuery={catalogSearch.searchQuery}
-                                            searchMethod={this.customSearchMethod}
-                                            updateCatalog={this.updateCatalog}
-                                            showEditor={this.showEditor}
-                                            removeComponent={this.removeComponent}
-                                            searchFinishCallback={this.searchFinishCallback}
-                                        />
+                                        {catalog.length !== 0 && (
+                                            <Catalog
+                                                catalog={catalog}
+                                                searchFocusIndex={catalogSearch.searchFocusIndex}
+                                                searchQuery={catalogSearch.searchQuery}
+                                                searchMethod={this.customSearchMethod}
+                                                updateCatalog={this.updateCatalog}
+                                                showEditor={this.showEditor}
+                                                removeComponent={this.removeComponent}
+                                                searchFinishCallback={this.searchFinishCallback}
+                                            />
+                                        )}
                                     </React.Fragment>
                                 )}
                             </Paper>
