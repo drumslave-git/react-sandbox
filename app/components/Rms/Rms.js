@@ -16,6 +16,10 @@ import AuthDialog from './AuthDialog';
 import Toolbar from './Toolbar';
 import Header from './Header';
 import TreeHelper from './treeHelper';
+import Tree from './Tree';
+
+// dummy
+const catalogData = require('./data/catalog.json');
 
 const EE = new EventEmitter();
 
@@ -124,17 +128,20 @@ class Rms extends React.Component {
 
     getStructure = (collection) => {
         if (collection === 'catalog') {
-            axios.get('/rms/api/tree').then(({ data, status }) => {
-                console.log(status, data);
-                if (status === 200) {
-                    this.setState({
-                        [collection]: data,
-                    });
-                }
-            }).catch((error) => {
-                EE.emit('afterRequest');
-                // eslint-disable-next-line no-console
-                console.log(error);
+            // axios.get('/rms/api/tree').then(({ data, status }) => {
+            //     console.log(status, data);
+            //     if (status === 200) {
+            //         this.setState({
+            //             [collection]: data,
+            //         });
+            //     }
+            // }).catch((error) => {
+            //     EE.emit('afterRequest');
+            //     // eslint-disable-next-line no-console
+            //     console.log(error);
+            // });
+            this.setState({
+                [collection]: catalogData,
             });
         } else {
             this.db.collection(collection).get().then((querySnapshot) => {
@@ -517,6 +524,7 @@ class Rms extends React.Component {
     render() {
         // eslint-disable-next-line react/prop-types
         const { classes } = this.props;
+        const hide = true;
         const {
             needAuth,
             data,
@@ -551,15 +559,18 @@ class Rms extends React.Component {
                                             searchFocusIndex={relationsSearch.searchFocusIndex}
                                             searchFoundCount={relationsSearch.searchFoundCount}
                                         />
-                                        <Folders
-                                            data={data}
-                                            relations={relations}
-                                            searchFocusIndex={relationsSearch.searchFocusIndex}
-                                            searchQuery={relationsSearch.searchQuery}
-                                            searchMethod={this.customSearchMethod}
-                                            updateRelations={this.updateRelations}
-                                            searchFinishCallback={this.searchFinishCallback}
-                                        />
+                                        <Tree data={catalog} copyNode />
+                                        {!hide && (
+                                            <Folders
+                                                data={data}
+                                                relations={relations}
+                                                searchFocusIndex={relationsSearch.searchFocusIndex}
+                                                searchQuery={relationsSearch.searchQuery}
+                                                searchMethod={this.customSearchMethod}
+                                                updateRelations={this.updateRelations}
+                                                searchFinishCallback={this.searchFinishCallback}
+                                            />
+                                        )}
                                     </React.Fragment>
                                 )}
                             </Paper>
@@ -577,7 +588,8 @@ class Rms extends React.Component {
                                             searchFocusIndex={catalogSearch.searchFocusIndex}
                                             searchFoundCount={catalogSearch.searchFoundCount}
                                         />
-                                        {catalog.length !== 0 && (
+                                        <Tree data={catalog} updateData={this.updateCatalog} />
+                                        {catalog.length !== 0 && !hide && (
                                             <Catalog
                                                 catalog={catalog}
                                                 searchFocusIndex={catalogSearch.searchFocusIndex}

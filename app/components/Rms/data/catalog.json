@@ -1,3 +1,92 @@
 [
-
+  {
+    "name": "General",
+    "description": "Some general elements",
+    "color": "red",
+    "id": "0",
+    "children": [
+      {
+        "name": "Toolbar",
+        "description": "General elements toolbar for elements",
+        "color": "blue",
+        "id": "1",
+        "children": [
+          {
+            "name": "Filters",
+            "description": "Popup with available filters",
+            "color": "grey",
+            "id": "2"
+          },
+          {
+            "name": "Color filter",
+            "description": "Filter by color groups",
+            "color": "yellow",
+            "id": "3"
+          },
+          {
+            "name": "Actions",
+            "description": "Bulk operations",
+            "color": "black",
+            "id": "4",
+            "children": [
+              {
+                "name": "Change color",
+                "color": "green",
+                "id": "5"
+              },
+              {
+                "name": "Remove selected",
+                "color": "red",
+                "id": "6"
+              }
+            ]
+          },
+          {
+            "name": "Quick search",
+            "description": "Contains, empty, etc.",
+            "color": "pink",
+            "id": "7"
+          },
+          {
+            "name": "Table name",
+            "description": "Current target table name",
+            "color": "amber",
+            "id": "8"
+          },
+          {
+            "name": "Pin button",
+            "description": "Pin portlet to current target table",
+            "color": "blue",
+            "id": "9"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Portlets",
+    "description": "",
+    "color": "red",
+    "id": "10",
+    "children": [
+      {
+        "name": "Charts",
+        "description": "Allows to see data in visual form",
+        "color": "magenta",
+        "id": "11"
+      },
+      {
+        "name": "Calendar",
+        "description": "Strict for date data",
+        "color": "blue",
+        "id": "13"
+      },
+      {
+        "name": "Edit record details",
+        "description": "Well... edit record",
+        "color": "grey",
+        "id": "14"
+      }
+    ]
+  }
 ]
