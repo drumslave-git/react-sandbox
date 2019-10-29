@@ -40,8 +40,7 @@ export const styles = theme => ({
         flexDirection: 'column',
     },
 });
-
-export const rmURL = 'https://redmine.enaikoon.de';
+export const rmURL = 'https://test-redmine.enaikoon.de';
 
 export const LIMITS = {
     issues: 100,

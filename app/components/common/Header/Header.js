@@ -8,10 +8,12 @@ function Header(props) {
         loading,
         doLogin,
         doLogout,
+        title,
     } = props;
     return (
         <UserInfo
             user={user}
+            title={title}
             classes={classes}
             loading={loading}
             doLogin={doLogin}

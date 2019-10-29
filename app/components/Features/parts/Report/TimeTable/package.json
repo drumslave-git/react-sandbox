@@ -1,0 +1,8 @@
+{
+  "name": "TimeTable",
+  "version": "0.0.1",
+  "main": "./TimeTable.jsx",
+  "dependencies": {
+    
+  }
+}

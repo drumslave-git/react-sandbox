@@ -67,6 +67,7 @@ class UserInfo extends React.Component {
             user,
             classes,
             doLogin,
+            title,
         } = this.props;
         const { username, password, anchorEl } = this.state;
         const open = Boolean(anchorEl);
@@ -78,7 +79,7 @@ class UserInfo extends React.Component {
                 >
                     <Toolbar>
                         <Typography variant="h6" color="inherit" className={classes.grow}>
-                            Photos
+                            {title || 'Photos'}
                         </Typography>
                         {user && user.id && (
                             <div>
@@ -166,6 +167,7 @@ class UserInfo extends React.Component {
 }
 UserInfo.defaultProps = {
     user: null,
+    title: '',
 };
 UserInfo.propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -173,6 +175,7 @@ UserInfo.propTypes = {
     loading: PropTypes.bool.isRequired,
     doLogin: PropTypes.func.isRequired,
     doLogout: PropTypes.func.isRequired,
+    title: PropTypes.string,
     user: PropTypes.shape({
         id: PropTypes.number,
         firstname: PropTypes.string,

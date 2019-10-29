@@ -36,10 +36,28 @@ const config = {
         publicPath: '/',
         port: process.env.PORT || 9090,
         proxy: {
+            '/redmine': {
+                target: 'http://localhost:7070/redmine',
+                changeOrigin: true,
+                pathRewrite: { '^/redmine': '' },
+                secure: false,
+            },
+            '/fetch': {
+                target: 'http://localhost:7070/fetch',
+                changeOrigin: true,
+                pathRewrite: { '^/fetch': '' },
+                secure: false,
+            },
             '/api': {
                 target: 'https://redmine.enaikoon.de',
                 changeOrigin: true,
                 pathRewrite: { '^/api': '' },
+                secure: false,
+            },
+            '/testapi': {
+                target: 'https://test-redmine.enaikoon.de',
+                changeOrigin: true,
+                pathRewrite: { '^/testapi': '' },
                 secure: false,
             },
             '/rms/api': {
@@ -60,12 +78,6 @@ const config = {
             {
                 test: /\.css$/,
                 loader: ['style-loader', 'css-loader'],
-            },
-            {
-                enforce: 'pre',
-                test: /\.jsx?$/,
-                exclude: /node_modules/,
-                loader: 'eslint-loader',
             },
             {
                 test: /\.jsx?$/,
@@ -164,15 +176,6 @@ const config = {
 
     plugins: [
         new webpack.NamedModulesPlugin(),
-        new webpack.LoaderOptionsPlugin({
-            test: /\.jsx?$/,
-            options: {
-                eslint: {
-                    configFile: resolve(__dirname, '.eslintrc'),
-                    cache: false,
-                },
-            },
-        }),
         new webpack.optimize.ModuleConcatenationPlugin(),
         new ExtractTextPlugin({ filename: './styles/style.css', disable: false, allChunks: true }),
         new CopyWebpackPlugin([{ from: 'vendors', to: 'vendors' }]),
