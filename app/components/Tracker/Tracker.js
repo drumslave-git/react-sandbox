@@ -445,6 +445,7 @@ class Tracker extends React.Component {
                 line += `| ${entry.humanTime} | `;
                 if (!issuesGrouping.includes(issue.id)) {
                     line += `#${entry.issue.id} | `;
+                    line += `${entry.issue.subject} | `;
                 }
                 line += `${entry.comments} |\n`;
                 return acc + line;

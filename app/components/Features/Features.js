@@ -246,16 +246,6 @@ class Features extends React.Component {
     getExtraFieldValuesPageByID = (id, t, c) => {
         const { auth } = this.state;
         EE.emit('beforeRequest');
-        // axios.get(
-        //     `https://test-redmine.enaikoon.de/custom_fields/${id}/enumerations`,
-        //     // {
-        //     //     auth,
-        //     //     headers: {
-        //     //         'Sec-Fetch-Mode': 'navigate',
-        //     //         'Sec-Fetch-Site': 'same-origin'
-        //     //     }
-        //     // },
-        // );
         axios.get(
             `${apiURL}/custom_fields.json`,
             {

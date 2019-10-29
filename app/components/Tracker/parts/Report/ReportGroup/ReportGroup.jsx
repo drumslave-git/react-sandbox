@@ -69,11 +69,18 @@ function ReportGroup(props) {
                                                             {entry.humanTime}
                                                         </TableCell>
                                                         {!isIt
-                                                        && (
-                                                            <TableCell>
-                                                                #{entry.issue.id}
-                                                            </TableCell>
-                                                        )
+                                                            && (
+                                                                <TableCell>
+                                                                    #{entry.issue.id}
+                                                                </TableCell>
+                                                            )
+                                                        }
+                                                        {!isIt
+                                                            && (
+                                                                <TableCell>
+                                                                    #{entry.issue.subject}
+                                                                </TableCell>
+                                                            )
                                                         }
                                                         <TableCell>
                                                             {entry.comments}
